@@ -3,4 +3,8 @@
 
 (fn love.draw []
   (game.draw)
-  )
+)
+
+(fn love.keypressed [key]
+  (game.keypressed key)
+)

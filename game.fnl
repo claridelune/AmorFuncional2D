@@ -101,7 +101,7 @@
   
   )
 
-  (fn love.keypressed [key]
+  (fn keypressed [key]
   (when (= key "r")
     [ (correct3 x3 y3)
       (correct2 x2 y2)
@@ -128,4 +128,7 @@
     
 )
 
-{:draw draw}
+{
+  :draw draw
+  :keypressed keypressed
+}
