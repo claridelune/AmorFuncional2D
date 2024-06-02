@@ -1,11 +1,8 @@
 fennel = require("fennel")
-debug.traceback = fennel.traceback
-table.insert(package.loaders, function(filename)
-   if love.filesystem.getInfo(filename) then
-      return function(...)
-         return fennel.eval(love.filesystem.read(filename), {env=_G, filename=filename}, ...), filename
-      end
-   end
-end)
--- jump into Fennel
-require("main.fnl")
+
+fennel.dofile = function(filename)
+   local source = assert(love.filesystem.read(filename))
+   return fennel.eval(source, {filename=filename, accurate=true})
+end
+
+fennel.dofile("main.fnl")

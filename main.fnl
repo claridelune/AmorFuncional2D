@@ -1,12 +1,6 @@
-(local game (require :src.game))
-
-(fn love.load []
-  (game.init))
-
-(fn love.update [dt]
-  ;; Update game logic
-  (game.update dt))
+; (local game (require :src.game))
+(local game (fennel.dofile "game.fnl"))
 
 (fn love.draw []
-  ;; Render game
-  (game.draw))
+  (game.draw)
+  )
