@@ -1,19 +1,29 @@
-(local box 900)
+(local box (love.graphics.getHeight) )
 (local cuadrado (/ box 6))
+(local inicio (/ (- (love.graphics.getWidth) box) 2))
+
+(var randx (% (love.math.random 6) 6))
+(var randy (% (love.math.random 6) 6))	
+
 (var first true)
 (var second true)
 (var third true)
 
-(var bigx 1)
-(var bigy 1)
+(var bigx (- (love.math.random 5) 1))
+(var bigy (- (love.math.random 5) 1))
 
-(var x1 5)
-(var x2 4)
-(var x3 0)
+(var x1 (- (love.math.random 6) 1))
+(var y1 (- (love.math.random 6) 1))
 
-(var y1 4)
-(var y2 1)
-(var y3 4)
+(var x2 (- (love.math.random 6) 1))
+(var y2 (- (love.math.random 6) 1))
+
+(while (and (= x1 x2) (= y1 y2)) (set x2 (- (love.math.random 6) 1)))
+
+(var x3 (- (love.math.random 6) 1))
+(var y3 (- (love.math.random 6) 1))
+
+(while (or (and (= x1 x3) (= y1 y3)) (and (= x2 x3) (= y2 y3))) (set y3 (- (love.math.random 6) 1)))
 
 (fn turn-two []
   (if (= first false)
@@ -75,28 +85,28 @@
   (love.graphics.setColor 0.5 0.5 0.5 0.5)
   (love.graphics.setLineWidth 1)
 
-  (for [i cuadrado (* cuadrado 6) cuadrado]
-  (love.graphics.line 0 i (* cuadrado 6) i)
-  (love.graphics.line i 0 i (* cuadrado 6))
+  (for [i 0 (* cuadrado 6) cuadrado]
+  (love.graphics.line inicio i (+ inicio (* cuadrado 6)) i)
+  (love.graphics.line (+ i inicio) 0 (+ i inicio) (* cuadrado 6))
   )
 
   (love.graphics.setColor 0 0 1 1)
   (love.graphics.setLineWidth 4)
-  (love.graphics.rectangle "line" (* cuadrado bigx) (* cuadrado bigy) (* cuadrado 2) (* cuadrado 2) )
+  (love.graphics.rectangle "line" (+ inicio (* cuadrado bigx)) (* cuadrado bigy) (* cuadrado 2) (* cuadrado 2) )
 
   (love.graphics.setColor 1 1 0 1)
 
   (if first
-    [(love.graphics.rectangle "line" (* cuadrado x1) (* cuadrado y1) cuadrado cuadrado)
-    (love.graphics.print "1" (* cuadrado (+ x1 0.5)) (* cuadrado (+ y1 0.5)))]
+    [(love.graphics.rectangle "line" (+ inicio (* cuadrado x1)) (* cuadrado y1) cuadrado cuadrado)
+    (love.graphics.print "1" (+ inicio (* cuadrado (+ x1 0.5))) (* cuadrado (+ y1 0.5)))]
   )
   (if second
-    [(love.graphics.rectangle "line" (* cuadrado x2) (* cuadrado y2) cuadrado cuadrado)
-    (love.graphics.print "2" (* cuadrado (+ x2 0.5)) (* cuadrado (+ y2 0.5)))]
+    [(love.graphics.rectangle "line" (+ inicio (* cuadrado x2)) (* cuadrado y2) cuadrado cuadrado)
+    (love.graphics.print "2" (+ inicio (* cuadrado (+ x2 0.5))) (* cuadrado (+ y2 0.5)))]
   )
   (if third
-    [(love.graphics.rectangle "line" (* cuadrado x3) (* cuadrado y3) cuadrado cuadrado)
-    (love.graphics.print "3" (* cuadrado (+ x3 0.5)) (* cuadrado (+ y3 0.5)))]
+    [(love.graphics.rectangle "line" (+ inicio (* cuadrado x3)) (* cuadrado y3) cuadrado cuadrado)
+    (love.graphics.print "3" (+ inicio (* cuadrado (+ x3 0.5))) (* cuadrado (+ y3 0.5)))]
   )
   
   )
