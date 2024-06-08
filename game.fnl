@@ -1,6 +1,9 @@
-(local box (love.graphics.getHeight) )
-(local cuadrado (/ box 6))
-(local inicio (/ (- (love.graphics.getWidth) box) 2))
+(var fullscreen false)	
+
+(var padding (* (love.graphics.getHeight) 0.02))
+(var box (- (love.graphics.getHeight) (* 2 padding)) )
+(var cuadrado (/ box 6))
+(var inicio (/ (- (love.graphics.getWidth) box) 2))
 
 (var randx (% (love.math.random 6) 6))
 (var randy (% (love.math.random 6) 6))	
@@ -78,40 +81,39 @@
   )
 )
 
-(
-  (fn draw []
+(fn draw []
   (love.graphics.clear 0 0 0)
 
   (love.graphics.setColor 0.5 0.5 0.5 0.5)
   (love.graphics.setLineWidth 1)
 
   (for [i 0 (* cuadrado 6) cuadrado]
-  (love.graphics.line inicio i (+ inicio (* cuadrado 6)) i)
-  (love.graphics.line (+ i inicio) 0 (+ i inicio) (* cuadrado 6))
+  (love.graphics.line inicio (+ padding i) (+ inicio (* cuadrado 6)) (+ padding i))
+  (love.graphics.line (+ i inicio) padding (+ i inicio) (+ padding (* cuadrado 6)))
   )
 
   (love.graphics.setColor 0 0 1 1)
   (love.graphics.setLineWidth 4)
-  (love.graphics.rectangle "line" (+ inicio (* cuadrado bigx)) (* cuadrado bigy) (* cuadrado 2) (* cuadrado 2) )
+  (love.graphics.rectangle "line" (+ inicio (* cuadrado bigx)) (+ padding (* cuadrado bigy)) (* cuadrado 2) (* cuadrado 2) )
 
   (love.graphics.setColor 1 1 0 1)
 
   (if first
-    [(love.graphics.rectangle "line" (+ inicio (* cuadrado x1)) (* cuadrado y1) cuadrado cuadrado)
-    (love.graphics.print "1" (+ inicio (* cuadrado (+ x1 0.5))) (* cuadrado (+ y1 0.5)))]
+    [(love.graphics.rectangle "line" (+ inicio (* cuadrado x1)) (+ padding (* cuadrado y1)) cuadrado cuadrado)
+    (love.graphics.print "1" (+ inicio (* cuadrado (+ x1 0.5))) (+ padding (* cuadrado (+ y1 0.5))))]
   )
   (if second
-    [(love.graphics.rectangle "line" (+ inicio (* cuadrado x2)) (* cuadrado y2) cuadrado cuadrado)
-    (love.graphics.print "2" (+ inicio (* cuadrado (+ x2 0.5))) (* cuadrado (+ y2 0.5)))]
+    [(love.graphics.rectangle "line" (+ inicio (* cuadrado x2)) (+ padding (* cuadrado y2)) cuadrado cuadrado)
+    (love.graphics.print "2" (+ inicio (* cuadrado (+ x2 0.5))) (+ padding (* cuadrado (+ y2 0.5))))]
   )
   (if third
-    [(love.graphics.rectangle "line" (+ inicio (* cuadrado x3)) (* cuadrado y3) cuadrado cuadrado)
-    (love.graphics.print "3" (+ inicio (* cuadrado (+ x3 0.5))) (* cuadrado (+ y3 0.5)))]
+    [(love.graphics.rectangle "line" (+ inicio (* cuadrado x3)) (+ padding (* cuadrado y3)) cuadrado cuadrado)
+    (love.graphics.print "3" (+ inicio (* cuadrado (+ x3 0.5))) (+ padding (* cuadrado (+ y3 0.5))))]
   )
   
-  )
+)
 
-  (fn keypressed [key]
+(fn keypressed [key]
   (when (= key "r")
     [ (correct3 x3 y3)
       (correct2 x2 y2)
@@ -132,12 +134,26 @@
       (correct2 (+ x2 1) (+ y2 1))
       (correct1 (+ x1 1) (+ y1 1))]
   )
-  (when (= key "escape")
-    (love.event.quit)))
-    
-    
-)
 
+  (when (= key "f5")
+    (if fullscreen 
+      [ (love.window.setFullscreen false )
+      (set fullscreen false)
+      ]
+      [ (love.window.setFullscreen true )
+      (set fullscreen true)
+      ]
+    )
+    (set padding (* (love.graphics.getHeight) 0.02))
+    (set box (- (love.graphics.getHeight) (* 2 padding)) )
+    (set cuadrado (/ box 6))
+    (set inicio (/ (- (love.graphics.getWidth) box) 2))  
+  )
+
+  (when (= key "escape")
+    (love.event.quit))
+)
+    
 {
   :draw draw
   :keypressed keypressed
