@@ -28,6 +28,13 @@
 
 (while (or (and (= x1 x3) (= y1 y3)) (and (= x2 x3) (= y2 y3))) (set y3 (- (love.math.random 6) 1)))
 
+(fn load []
+)
+
+(fn update [dt]
+  0
+)
+
 (fn turn-two []
   (if (= first false)
     true
@@ -155,6 +162,8 @@
 )
     
 {
+  :load load
+  :update update
   :draw draw
   :keypressed keypressed
 }

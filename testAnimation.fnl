@@ -8,12 +8,15 @@
   )
 
 (fn update [dt] 
-  (animation.colorChange.update dt))
+  (animation.colorChange.update dt) 0)
 
 (fn draw [] (animation.colorChange.draw))
+
+(fn keypressed [key])
 
 {
   : load
   : update
   : draw
+  : keypressed
 }
