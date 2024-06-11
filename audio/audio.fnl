@@ -27,10 +27,14 @@
   )
 )
 
+(fn advanceTarget []
+  (set currentTarget (% (+ currentTarget 1) (length targets)))
+  (set currentTargetTime (beats.getBeatTime (. targets (+ 1 currentTarget))))
+)
+
 (fn update [dt]
   (when (and (> (length targets) 0) (< currentTargetTime (- (beats.getCurrentAudioTime) windowOk)))
-    (set currentTarget (% (+ currentTarget 1) (length targets)))
-    (set currentTargetTime (beats.getBeatTime (. targets (+ 1 currentTarget))))
+    (advanceTarget)
   )
   (beats.update dt)
 )
@@ -83,6 +87,7 @@
 
 {
   : init
+  : advanceTarget
   : update
   : drawDebug
   : checkBeatState
