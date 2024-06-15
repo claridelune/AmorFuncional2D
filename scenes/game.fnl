@@ -42,11 +42,11 @@
   (var control true)
   (for [i nSquares 2 -1]
     (if (and (correct (+ xx (. (. listS i) 2)) (+ yy (. (. listS i) 3))) (not (. (. listS (- i 1)) 1)))
-      (tset listS i [false (. (. listS i) 2) (. (. listS i) 3)])
+      (tset listS i 1 false)
     )
   )
   (if (correct (+ xx (. (. listS 1) 2)) (+ yy (. (. listS 1) 3)))
-    (tset listS 1 [false (. (. listS 1) 2) (. (. listS 1) 3)])
+    (tset listS 1 1 false)
   )
 )
 
