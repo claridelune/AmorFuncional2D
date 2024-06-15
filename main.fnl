@@ -1,5 +1,5 @@
 (local scenes [
-  (fennel.dofile "game.fnl")
+  (fennel.dofile "scenes/game.fnl")
   (fennel.dofile "scenes/audioConfig.fnl")
   (fennel.dofile "scenes/testBeats.fnl")
   (fennel.dofile "testAnimation.fnl")
