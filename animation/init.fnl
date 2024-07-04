@@ -22,6 +22,13 @@
               :y params.y}]
     rect))
 
+(fn init-all [rect]
+  (color-change.init rect)
+  (fade.init rect)
+  (grow-shrink.init rect)
+  (border.init rect)
+)
+
 (fn update [rect dt] 
   (fade.update rect dt)
   (when rect.colorChange 
@@ -49,4 +56,5 @@
  : draw
  : fade
  :growShrink grow-shrink
- : update}	
+ : update
+ : init-all}	

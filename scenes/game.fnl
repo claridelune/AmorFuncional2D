@@ -13,9 +13,10 @@
 (var nSquares 4)
 (var listS [])
 (for [i 1 nSquares 1]
-  (table.insert listS [false 0 0])
+  (table.insert listS [false 0 0 nil])
 )
 
+(local animations (fennel.dofile "animation/init.fnl"))
 
 (fn correctx [a]  ;; 1 1 - 5 4
   (if (= (% bigx 2) (% a 2))
@@ -54,7 +55,7 @@
 
 
 (fn rSquares []
-  (if (not (. (. listS nSquares) 1))
+  (if (not (. (. listS nSquares) 1))  ;; Si el último cuadrado no está activo
     [(set bigx (love.math.random 0 4))
     (set bigy (love.math.random 0 4))
     (for [k 1 nSquares 1]
@@ -74,7 +75,9 @@
             )
           )
         )
-        (tset listS i [true x y])
+        (let [rect (animations.createRectangle {:x (+ inicio (* cuadrado x)) :y (+ padding (* cuadrado y)) :w cuadrado :h cuadrado :colorChange false :grow false :thicken false :alpha 1 :line true})]
+          (animations.init-all rect)
+          (tset listS i [true x y rect]))
       )
     )]
   )
@@ -88,6 +91,10 @@
 )
 
 (fn update [dt]
+  (for [i 1 nSquares 1]
+    (when (. (. listS i) 4)
+      (animations.update (. (. listS i) 4) dt))
+  )
   changeScene
 )
 
@@ -113,8 +120,9 @@
 
   (for [i 1 nSquares 1]
     (if (. (. listS i) 1)
-      [(love.graphics.rectangle "line" (+ inicio (* cuadrado (. (. listS i) 2))) (+ padding (* cuadrado (. (. listS i) 3))) cuadrado cuadrado)
-      (love.graphics.print i (+ inicio (* cuadrado (+ (. (. listS i) 2) 0.5))) (+ padding (* cuadrado (+ (. (. listS i) 3) 0.5))))]
+      (do
+        (animations.draw (. (. listS i) 4))
+        (love.graphics.print i (+ inicio (* cuadrado (+ (. (. listS i) 2) 0.5))) (+ padding (* cuadrado (+ (. (. listS i) 3) 0.5)))))
     )
   )
 )

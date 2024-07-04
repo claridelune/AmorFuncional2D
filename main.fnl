@@ -5,7 +5,7 @@
   (fennel.dofile "testAnimation.fnl")
 ])
 
-(var currentScene 4) ; set starting scene
+(var currentScene 1) ; set starting scene
 ;; every scene must have a load, update, draw and keypressed functions
 ;; the update function must return 0 (no scene change) or a number indicating the
 ;; index of another scene (scene change)
