@@ -1,7 +1,7 @@
 (local audio (fennel.dofile "audio/audio.fnl"))
-(local labels [:Nope! :Ok :Great! :Perfect! ""])
+(local labels [:Nope! :Ok :Great! :Perfect! :Miss! ""])
 
-(var lastLabel 4)
+(var lastLabel 5)
 
 (var changeScene 0)
 
@@ -109,22 +109,35 @@
   )
 )
 
-
-
-
-
 (fn load []
   (audio.init 4 [1 2 3 4] 200 2)
 )
 
 (fn update [dt]
-  (audio.update dt)
+  (when (= (. (audio.update dt) 1) 1)
+    (var i 0)
+    (var j 0)
+    (while (not (valid i j))
+      (if (and (= i 0) (= j 0))
+        (set j 1)
+        (if (and (= i 0) (= j 1))
+          (set i 1)
+          (if (and (= i 1) (= j 1))
+            (set j 0) 
+          )
+        )
+      )
+    )
+    (set lastLabel 4)
+  )
+
   (for [i 1 nSquares 1]
     (when (. (. listS i) 4)
       (animations.update (. (. listS i) 4) dt))
   )
   changeScene
 )
+
 
 (fn draw []
 
@@ -158,7 +171,7 @@
   (when (= key "r")
     (var state (audio.checkBeatState))
     (if (not= state 0)
-      [(audio.advanceTarget)
+      [
       (if (valid 0 0)
         (set lastLabel state)
         (set lastLabel 0))]
@@ -169,7 +182,7 @@
   (when (= key "f")
     (var state (audio.checkBeatState))
     (if (not= state 0)
-      [(audio.advanceTarget)
+      [
       (if (valid 0 1)
         (set lastLabel state)
         (set lastLabel 0)
@@ -180,7 +193,7 @@
   (when (= key "o")
     (var state (audio.checkBeatState))
     (if (not= state 0)
-      [(audio.advanceTarget)
+      [
       (if (valid 1 0)
         (set lastLabel state)
         (set lastLabel 0))]
@@ -190,7 +203,7 @@
   (when (= key "k")
     (var state (audio.checkBeatState))
     (if (not= state 0)
-      [(audio.advanceTarget)
+      [
       (if (valid 1 1)
         (set lastLabel state)
         (set lastLabel 0))]
