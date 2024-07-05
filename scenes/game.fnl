@@ -1,6 +1,9 @@
 (local audio (fennel.dofile "audio/audio.fnl"))
 (local labels [:Nope! :Ok :Great! :Perfect! :Miss! ""])
 
+(var score 0)
+(local vals [0 50 100 200])
+
 (var lastLabel 5)
 
 (var moveBS 1)
@@ -166,6 +169,7 @@
   (love.graphics.clear 0 0 0)
 
   (love.graphics.print (. labels (+ 1 lastLabel)) 200 300)
+  (love.graphics.print score 200 400)
   (love.graphics.setColor 0.5 0.5 0.5 0.5)
   (love.graphics.setLineWidth 1)
 
@@ -195,6 +199,7 @@
       [
       (if (valid 0 0)
         [(set lastLabel state)
+        (set score (+ score (. vals (+ state 1))))
         (set moveBS 1)]
         (set lastLabel 0))]
       (set lastLabel 0)
@@ -207,6 +212,7 @@
       [
       (if (valid 0 1)
         [(set lastLabel state)
+        (set score (+ score (. vals (+ state 1))))
         (set moveBS 1)]
         (set lastLabel 0)
       )]
@@ -219,6 +225,7 @@
       [
       (if (valid 1 0)
         [(set lastLabel state)
+        (set score (+ score (. vals (+ state 1))))
         (set moveBS 1)]
         (set lastLabel 0))]
       (set lastLabel 0)
@@ -230,6 +237,7 @@
       [
       (if (valid 1 1)
         [(set lastLabel state)
+        (set score (+ score (. vals (+ state 1))))
         (set moveBS 1)]
         (set lastLabel 0))]
       (set lastLabel 0)
