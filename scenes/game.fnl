@@ -3,6 +3,8 @@
 
 (var lastLabel 5)
 
+(var moveBS 1)
+
 (var changeScene 0)
 
 (var fullscreen false)	
@@ -109,8 +111,24 @@
   )
 )
 
+(fn moveBigS []
+  (var i 1)
+  (while (not (. (. listS i) 1))
+    (set i (+ 1 i))
+  )
+  (if (= (% (. (. listS i) 2) 2) (% bigx 2))
+    (set bigx (. (. listS i) 2))
+    (set bigx (- (. (. listS i) 2) 1) )
+  )
+  (if (= (% (. (. listS i) 3) 2) (% bigy 2))
+    (set bigy (. (. listS i) 3))
+    (set bigy (- (. (. listS i) 3) 1) )
+  )
+  (set moveBS 0)
+) 
+
 (fn load []
-  (audio.init 4 [1 2 3 4] 200 2)
+  (audio.init 6 [2 5] 200 2)
 )
 
 (fn update [dt]
@@ -142,6 +160,9 @@
 (fn draw []
 
   (rSquares)
+  (if moveBS
+    (moveBigS)
+  )
   (love.graphics.clear 0 0 0)
 
   (love.graphics.print (. labels (+ 1 lastLabel)) 200 300)
@@ -173,7 +194,8 @@
     (if (not= state 0)
       [
       (if (valid 0 0)
-        (set lastLabel state)
+        [(set lastLabel state)
+        (set moveBS 1)]
         (set lastLabel 0))]
       (set lastLabel 0)
     )
@@ -184,7 +206,8 @@
     (if (not= state 0)
       [
       (if (valid 0 1)
-        (set lastLabel state)
+        [(set lastLabel state)
+        (set moveBS 1)]
         (set lastLabel 0)
       )]
       (set lastLabel 0)
@@ -195,7 +218,8 @@
     (if (not= state 0)
       [
       (if (valid 1 0)
-        (set lastLabel state)
+        [(set lastLabel state)
+        (set moveBS 1)]
         (set lastLabel 0))]
       (set lastLabel 0)
     )
@@ -205,7 +229,8 @@
     (if (not= state 0)
       [
       (if (valid 1 1)
-        (set lastLabel state)
+        [(set lastLabel state)
+        (set moveBS 1)]
         (set lastLabel 0))]
       (set lastLabel 0)
     )
