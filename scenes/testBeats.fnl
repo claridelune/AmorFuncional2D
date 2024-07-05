@@ -18,7 +18,11 @@
 )
 
 (fn update [dt]
-  (audio.update dt)
+  (when (= (. (audio.update dt) 1) 1)
+    (set streak 0)
+    (set colorG 0)
+    (set colorR 1)
+  )
   changeScene
 )
 
@@ -44,19 +48,16 @@
         (set streak (+ streak 1))
         (set colorG 1)
         (set colorR 0)
-        (audio.advanceTarget)
       )
       2 (do ; Great
         (set streak (+ streak 1))
         (set colorG 0.75)
         (set colorR 0.15)
-        (audio.advanceTarget)
       )
       1 (do ; Ok
         (set streak (+ streak 1))
         (set colorG 0.5)
         (set colorR 0.3)
-        (audio.advanceTarget)
       )
       0 (do ; Nope
         (set streak 0)

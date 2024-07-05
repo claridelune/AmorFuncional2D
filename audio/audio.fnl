@@ -33,10 +33,11 @@
 )
 
 (fn update [dt]
-  (when (and (> (length targets) 0) (< currentTargetTime (- (beats.getCurrentAudioTime) windowOk)))
-    (advanceTarget)
+  [(if (and (> (length targets) 0) (< currentTargetTime (- (beats.getCurrentAudioTime) windowOk)))
+    (do (advanceTarget) 1)
+    0
   )
-  (beats.update dt)
+  (beats.update dt)]
 )
 
 (fn drawDebug []
@@ -53,11 +54,11 @@
     (set debug2 currentTargetTime)
     (if
       (and (<= (- currentTargetTime windowPerfect) currTime) (<= currTime (+ currentTargetTime windowPerfect)))
-        3
+        (do (advanceTarget) 3)
       (and (<= (- currentTargetTime windowGreat) currTime) (<= currTime (+ currentTargetTime windowGreat)))
-        2
+        (do (advanceTarget) 2)
       (and (<= (- currentTargetTime windowOk) currTime) (<= currTime (+ currentTargetTime windowOk)))
-        1
+        (do (advanceTarget) 1)
       0
     )
   )
