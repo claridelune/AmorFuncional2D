@@ -7,7 +7,7 @@
   (let [rect {:alpha (or params.alpha 1)
               :appearing true
               :b (or params.b 1)
-              :borderThickness 1
+              :borderThickness (or params.borderThickness 1)
               :colorChange false
               :g (or params.g 1)
               :grow false
@@ -24,9 +24,9 @@
 
 (fn init-all [rect]
   (color-change.init rect)
-  (fade.init rect)
   (grow-shrink.init rect)
   (border.init rect)
+  (fade.init rect)
 )
 
 (fn update [rect dt] 
@@ -35,8 +35,7 @@
     (color-change.update rect dt))
   (when rect.grow 
     (grow-shrink.update rect dt))
-  (when (= rect.grow false)
-    (set rect.decreasing true)
+  (when (and (not rect.grow) rect.decreasing)
     (grow-shrink.update rect dt))
   (when rect.thicken 
     (border.update rect dt)))

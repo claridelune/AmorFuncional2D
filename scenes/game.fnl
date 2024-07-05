@@ -43,12 +43,14 @@
   (var control true)
   (for [i nSquares 2 -1]
     (if (and (correct (+ xx (. (. listS i) 2)) (+ yy (. (. listS i) 3))) (not (. (. listS (- i 1)) 1)))
-      (tset listS i 1 false)
-    )
+      (do
+        (tset listS i 1 false)
+        (tset (. (. listS i) 4) :appearing false)))
   )
   (if (correct (+ xx (. (. listS 1) 2)) (+ yy (. (. listS 1) 3)))
-    (tset listS 1 1 false)
-  )
+    (do
+      (tset listS 1 1 false)
+      (tset (. (. listS 1) 4) :appearing false)))
 )
 
 
@@ -75,7 +77,20 @@
             )
           )
         )
-        (let [rect (animations.createRectangle {:x (+ inicio (* cuadrado x)) :y (+ padding (* cuadrado y)) :w cuadrado :h cuadrado :colorChange false :grow false :thicken false :alpha 1 :line true})]
+        (let [rect (animations.createRectangle {
+                                               :x (+ inicio (* cuadrado x)) 
+                                               :y (+ padding (* cuadrado y)) 
+                                               :w cuadrado 
+                                               :h cuadrado 
+                                               :borderThickness 4 
+                                               :r 1 
+                                               :g 1 
+                                               :b 0 
+                                               :colorChange false 
+                                               :grow false 
+                                               :thicken false 
+                                               :alpha 1 
+                                               :line true})]
           (animations.init-all rect)
           (tset listS i [true x y rect]))
       )
@@ -119,11 +134,8 @@
   (love.graphics.setColor 1 1 0 1)
 
   (for [i 1 nSquares 1]
-    (if (. (. listS i) 1)
-      (do
         (animations.draw (. (. listS i) 4))
-        (love.graphics.print i (+ inicio (* cuadrado (+ (. (. listS i) 2) 0.5))) (+ padding (* cuadrado (+ (. (. listS i) 3) 0.5)))))
-    )
+        (love.graphics.print i (+ inicio (* cuadrado (+ (. (. listS i) 2) 0.5))) (+ padding (* cuadrado (+ (. (. listS i) 3) 0.5))))
   )
 )
 
