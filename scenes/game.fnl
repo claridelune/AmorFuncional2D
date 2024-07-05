@@ -1,3 +1,8 @@
+(local audio (fennel.dofile "audio/audio.fnl"))
+(local labels [:Nope! :Ok :Great! :Perfect! ""])
+
+(var lastLabel 4)
+
 (var changeScene 0)
 
 (var fullscreen false)	
@@ -40,19 +45,25 @@
 )
 
 (fn valid [xx yy]
-  (var control true)
+  (var return false)
   (for [i nSquares 2 -1]
     (if (and (correct (+ xx (. (. listS i) 2)) (+ yy (. (. listS i) 3))) (not (. (. listS (- i 1)) 1)))
       (do
+        (if (. (. listS i) 1)
+          (set return true)
+        )
         (tset listS i 1 false)
         (tset (. (. listS i) 4) :appearing false)))
   )
   (if (correct (+ xx (. (. listS 1) 2)) (+ yy (. (. listS 1) 3)))
     (do
+      (if (. (. listS 1) 1)
+        (set return true)
+      )
       (tset listS 1 1 false)
       (tset (. (. listS 1) 4) :appearing false)))
+  return
 )
-
 
 
 
@@ -103,9 +114,11 @@
 
 
 (fn load []
+  (audio.init 4 [1 2 3 4] 200 2)
 )
 
 (fn update [dt]
+  (audio.update dt)
   (for [i 1 nSquares 1]
     (when (. (. listS i) 4)
       (animations.update (. (. listS i) 4) dt))
@@ -118,7 +131,7 @@
   (rSquares)
   (love.graphics.clear 0 0 0)
 
-
+  (love.graphics.print (. labels (+ 1 lastLabel)) 200 300)
   (love.graphics.setColor 0.5 0.5 0.5 0.5)
   (love.graphics.setLineWidth 1)
 
@@ -139,18 +152,50 @@
   )
 )
 
+
+
 (fn keypressed [key]
   (when (= key "r")
-    (valid 0 0)
+    (var state (audio.checkBeatState))
+    (if (not= state 0)
+      [(audio.advanceTarget)
+      (if (valid 0 0)
+        (set lastLabel state)
+        (set lastLabel 0))]
+      (set lastLabel 0)
+    )
+    
   )
   (when (= key "f")
-    (valid 0 1)
+    (var state (audio.checkBeatState))
+    (if (not= state 0)
+      [(audio.advanceTarget)
+      (if (valid 0 1)
+        (set lastLabel state)
+        (set lastLabel 0)
+      )]
+      (set lastLabel 0)
+    )
   )
   (when (= key "o")
-    (valid 1 0)
+    (var state (audio.checkBeatState))
+    (if (not= state 0)
+      [(audio.advanceTarget)
+      (if (valid 1 0)
+        (set lastLabel state)
+        (set lastLabel 0))]
+      (set lastLabel 0)
+    )
   )
   (when (= key "k")
-    (valid 1 1)
+    (var state (audio.checkBeatState))
+    (if (not= state 0)
+      [(audio.advanceTarget)
+      (if (valid 1 1)
+        (set lastLabel state)
+        (set lastLabel 0))]
+      (set lastLabel 0)
+    )
   )
   (when (= key "1")
     (set changeScene 1)

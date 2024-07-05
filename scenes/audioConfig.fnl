@@ -57,7 +57,7 @@
     )
   )
   (when (= key "p")
-    (set changeScene 3)
+    (set changeScene 1)
   )
   (when (= key "r")
     (updateOffsetInput)
