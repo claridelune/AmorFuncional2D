@@ -1,5 +1,10 @@
 (local audio (fennel.dofile "audio/audio.fnl"))
+(local songData (fennel.dofile "audio/songData.fnl"))
 (local labels [:Nope! :Ok :Great! :Perfect! :Miss! ""])
+(local colors [[1 0 0] [0 1 0] [0 1 0] [0 1 0] [1 0 0] [1 1 0]])
+
+(var songId 1)
+(var bar 1)
 
 (var score 0)
 (local vals [0 50 100 200])
@@ -131,25 +136,36 @@
 ) 
 
 (fn load []
-  (audio.init 6 [2 5] 200 2)
+  (set bar 1)
+  (let [barData (songData.getBeats songId bar)]
+    (audio.init (. barData 1) (. barData 2) (songData.getSongBPM songId) 2 false (songData.getSongTitle songId) (songData.getSongVolume songId))
+  )
 )
 
 (fn update [dt]
-  (when (= (. (audio.update dt) 1) 1)
-    (var i 0)
-    (var j 0)
-    (while (not (valid i j))
-      (if (and (= i 0) (= j 0))
-        (set j 1)
-        (if (and (= i 0) (= j 1))
-          (set i 1)
-          (if (and (= i 1) (= j 1))
-            (set j 0) 
+  (let [audioState (audio.update dt)]
+    (when (= (. audioState 1) 1)
+      (var i 0)
+      (var j 0)
+      (while (not (valid i j))
+        (if (and (= i 0) (= j 0))
+          (set j 1)
+          (if (and (= i 0) (= j 1))
+            (set i 1)
+            (if (and (= i 1) (= j 1))
+              (set j 0) 
+            )
           )
         )
       )
+      (set lastLabel 4)
     )
-    (set lastLabel 4)
+    (when (= (. audioState 2) 1)
+      (set bar (+ 1 bar))
+      (let [barData (songData.getBeats songId bar)]
+        (audio.changeBeats (. barData 1) (. barData 2))
+      )
+    )
   )
 
   (for [i 1 nSquares 1]
@@ -168,8 +184,11 @@
   )
   (love.graphics.clear 0 0 0)
 
-  (love.graphics.print (. labels (+ 1 lastLabel)) 200 300)
   (love.graphics.print score 200 400)
+  (let [cc (. colors (+ 1 lastLabel))]
+    (love.graphics.setColor (. cc 1) (. cc 2) (. cc 3))
+  )
+  (love.graphics.print (. labels (+ 1 lastLabel)) 200 300)
   (love.graphics.setColor 0.5 0.5 0.5 0.5)
   (love.graphics.setLineWidth 1)
 
@@ -188,9 +207,9 @@
         (animations.draw (. (. listS i) 4))
         (love.graphics.print i (+ inicio (* cuadrado (+ (. (. listS i) 2) 0.5))) (+ padding (* cuadrado (+ (. (. listS i) 3) 0.5))))
   )
+
+  ;(audio.drawDebug)
 )
-
-
 
 (fn keypressed [key]
   (when (= key "r")
@@ -200,7 +219,8 @@
       (if (valid 0 0)
         [(set lastLabel state)
         (set score (+ score (. vals (+ state 1))))
-        (set moveBS 1)]
+        (set moveBS 1)
+        (audio.advanceTarget)]
         (set lastLabel 0))]
       (set lastLabel 0)
     )
@@ -213,7 +233,8 @@
       (if (valid 0 1)
         [(set lastLabel state)
         (set score (+ score (. vals (+ state 1))))
-        (set moveBS 1)]
+        (set moveBS 1)
+        (audio.advanceTarget)]
         (set lastLabel 0)
       )]
       (set lastLabel 0)
@@ -226,7 +247,8 @@
       (if (valid 1 0)
         [(set lastLabel state)
         (set score (+ score (. vals (+ state 1))))
-        (set moveBS 1)]
+        (set moveBS 1)
+        (audio.advanceTarget)]
         (set lastLabel 0))]
       (set lastLabel 0)
     )
@@ -238,18 +260,22 @@
       (if (valid 1 1)
         [(set lastLabel state)
         (set score (+ score (. vals (+ state 1))))
-        (set moveBS 1)]
+        (set moveBS 1)
+        (audio.advanceTarget)]
         (set lastLabel 0))]
       (set lastLabel 0)
     )
   )
   (when (= key "1")
+    (audio.stop)
     (set changeScene 1)
   )
   (when (= key "2")
+    (audio.stop)
     (set changeScene 2)
   )
   (when (= key "3")
+    (audio.stop)
     (set changeScene 3)
   )
 

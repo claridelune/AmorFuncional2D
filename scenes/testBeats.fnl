@@ -6,22 +6,32 @@
 (var streak 0)
 (var lastLabel 5)
 (var changeScene 0)
+(var bar 0)
 
 (fn load []
-  (audio.init 4 [1 3 4] 200 2)
+  (audio.init 4 [1 3 4] 188 2 false)
   (love.graphics.setLineWidth 4)
   (set changeScene 0)
   (set colorR 1)
   (set colorG 1)
   (set streak 0)
   (set lastLabel 5)
+  (set bar 0)
 )
 
 (fn update [dt]
-  (when (= (. (audio.update dt) 1) 1)
-    (set streak 0)
-    (set colorG 0)
-    (set colorR 1)
+  (let [audioState (audio.update dt)]
+    (when (= (. audioState 1) 1)
+      (set streak 0)
+      (set colorG 0)
+      (set colorR 1)
+    )
+    (when (= (. audioState 2) 1)
+      (set bar (+ 1 bar))
+      (when (= bar 4)
+        (audio.changeBeats 8 [1 2 4 5 7])
+      )
+    )
   )
   changeScene
 )
@@ -48,16 +58,19 @@
         (set streak (+ streak 1))
         (set colorG 1)
         (set colorR 0)
+        (audio.advanceTarget)
       )
       2 (do ; Great
         (set streak (+ streak 1))
         (set colorG 0.75)
         (set colorR 0.15)
+        (audio.advanceTarget)
       )
       1 (do ; Ok
         (set streak (+ streak 1))
         (set colorG 0.5)
         (set colorR 0.3)
+        (audio.advanceTarget)
       )
       0 (do ; Nope
         (set streak 0)

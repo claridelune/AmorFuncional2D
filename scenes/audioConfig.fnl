@@ -5,18 +5,21 @@
 (var changeScene 0)
 
 (fn load []
-  (audio.init 1 [] 200 0)
+  (audio.init 1 [] 188 0 true)
   (love.graphics.setLineWidth 4)
   (set changeScene 0)
   (set keep false)
 )
 
 (fn updateOffsetInput []
-    (let [oldLength (+ (length diffs) 1)]
+    (let [oldLength (length diffs)]
+      (when (not= oldLength 0)
+        (tset _G :offsetInput 0)
         (while (> (length diffs) 0)
             (tset _G :offsetInput (+ (. _G :offsetInput) (table.remove diffs)))
         )
         (tset _G :offsetInput (/ (. _G :offsetInput) oldLength))
+      )
     )
 )
 
@@ -46,7 +49,7 @@
     (do 
         (set keep (not keep))
         (if keep
-            (audio.changeBeats 4 [1 3])
+            (audio.changeBeats 2 [1])
             (do (updateOffsetInput) (audio.changeBeats 1 []))
         )
     )

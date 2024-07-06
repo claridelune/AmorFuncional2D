@@ -20,7 +20,8 @@
         (tset beats value 2)
     )
     (set bSize beatsSize)
-    (set currBeat (- bSize 1))
+    ;(set currBeat (- bSize 1))
+    (set currBeat -1)
 )
 
 (lambda init [beatsSize ticB tocB bpm offset ?songLoc ?songVol]
@@ -29,17 +30,20 @@
 )
 
 (fn update [dt]
-    (when (rhythm.update dt)
-        (set currBeat (% (+ currBeat 1) bSize))
-        (when (= (. beats (+ 1 currBeat)) 1)
-            (ticSound:stop)
-            (ticSound:play)
+    (if (rhythm.update dt)
+        (let [bbb currBeat]
+            (set currBeat (% (+ currBeat 1) bSize))
+            (when (= (. beats (+ 1 currBeat)) 1)
+                (ticSound:stop)
+                (ticSound:play)
+            )
+            (when (= (. beats (+ 1 currBeat)) 2)
+                (tocSound:stop)
+                (tocSound:play)
+            )
+            (if (= currBeat (- bSize 1)) 1 0)
         )
-        (when (= (. beats (+ 1 currBeat)) 2)
-            (tocSound:stop)
-            (tocSound:play)
-        )
-        (= currBeat (- bSize 1))
+        0
     )
 )
 
@@ -52,7 +56,8 @@
 )
 
 (fn getBeatTime [index]
-    (let [trans (if (<= currBeat index) (- index currBeat) (- bSize (- currBeat index)))]
+    (let [cbb (+ currBeat 1)
+        trans (if (< cbb index) (- index cbb) (- bSize (- cbb index)))]
         (rhythm.getUpcomingBeatTime trans)
     )
 )
