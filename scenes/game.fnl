@@ -1,4 +1,5 @@
 (local audio (fennel.dofile "audio/audio.fnl"))
+(local animations (fennel.dofile "animation/init.fnl"))
 (local songData (fennel.dofile "audio/songData.fnl"))
 (local labels [:Nope! :Ok :Great! :Perfect! :Miss! ""])
 (local colors [[1 0 0] [0 1 0] [0 1 0] [0 1 0] [1 0 0] [1 1 0]])
@@ -24,14 +25,22 @@
 
 (var bigx (love.math.random 0 4))
 (var bigy (love.math.random 0 4))
+(var bigSquare (animations.createRectangle {:x (+ inicio (* cuadrado bigx))
+                                            :y (+ padding (* cuadrado bigy))
+                                            :w (* cuadrado 2)
+                                            :h (* cuadrado 2)
+                                            :borderThickness 4
+                                            :r 0
+                                            :g 0
+                                            :b 1
+                                            :line true}))
+(animations.initAll bigSquare)
 
 (var nSquares 4)
 (var listS [])
 (for [i 1 nSquares 1]
   (table.insert listS [false 0 0 nil])
 )
-
-(local animations (fennel.dofile "animation/init.fnl"))
 
 (fn correctx [a]  ;; 1 1 - 5 4
   (if (= (% bigx 2) (% a 2))
@@ -112,7 +121,7 @@
                                                :thicken false 
                                                :alpha 1 
                                                :line true})]
-          (animations.init-all rect)
+          (animations.initAll rect)
           (tset listS i [true x y rect]))
       )
     )]
@@ -124,16 +133,14 @@
   (while (not (. (. listS i) 1))
     (set i (+ 1 i))
   )
-  (if (= (% (. (. listS i) 2) 2) (% bigx 2))
-    (set bigx (. (. listS i) 2))
-    (set bigx (- (. (. listS i) 2) 1) )
-  )
-  (if (= (% (. (. listS i) 3) 2) (% bigy 2))
-    (set bigy (. (. listS i) 3))
-    (set bigy (- (. (. listS i) 3) 1) )
-  )
-  (set moveBS 0)
-) 
+  (let [target-x (if (= (% (. (. listS i) 2) 2) (% bigx 2))
+                   (. (. listS i) 2)
+                   (- (. (. listS i) 2) 1))
+        target-y (if (= (% (. (. listS i) 3) 2) (% bigy 2))
+                   (. (. listS i) 3)
+                   (- (. (. listS i) 3) 1))]
+    (animations.move.init bigSquare (+ inicio (* cuadrado target-x)) (+ padding (* cuadrado target-y)) 0.1))
+  (set moveBS 0))
 
 (fn load []
   (set bar 1)
@@ -143,6 +150,7 @@
 )
 
 (fn update [dt]
+  (animations.update bigSquare dt)
   (let [audioState (audio.update dt)]
     (when (= (. audioState 1) 1)
       (var i 0)
@@ -199,7 +207,8 @@
 
   (love.graphics.setColor 0 0 1 1)
   (love.graphics.setLineWidth 4)
-  (love.graphics.rectangle "line" (+ inicio (* cuadrado bigx)) (+ padding (* cuadrado bigy)) (* cuadrado 2) (* cuadrado 2) )
+  ; (love.graphics.rectangle "line" (+ inicio (* cuadrado bigx)) (+ padding (* cuadrado bigy)) (* cuadrado 2) (* cuadrado 2) )
+  (animations.draw bigSquare)
 
   (love.graphics.setColor 1 1 0 1)
 

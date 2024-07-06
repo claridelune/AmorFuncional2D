@@ -2,24 +2,27 @@
 (local fade (fennel.dofile "animation/fade.fnl"))
 (local grow-shrink (fennel.dofile "animation/growShrink.fnl"))
 (local border (fennel.dofile "animation/border.fnl"))
+(local move (fennel.dofile "animation/move.fnl"))
 
 (fn create-rectangle [params]
   (let [rect {:alpha (or params.alpha 1)
-              :appearing true
+              :appearing (or params.appearing true)
               :b (or params.b 1)
               :borderThickness (or params.borderThickness 1)
-              :colorChange false
+              :colorChange (or params.colorChange false)
+              :colorTransitionSpeed (or params.colorTransitionSpeed 0.5)
               :g (or params.g 1)
-              :grow false
-              :h params.h
-              :appearing true
+              :grow (or params.grow false)
+              :growShrinkTransitionSpeed (or params.growShrinkTransitionSpeed 0.5)
+              :h (or params.h 100)
               :r (or params.r 1)
               :line (or params.line false)
-              :scale 1
-              :thicken false
-              :w params.w
-              :x params.x
-              :y params.y}]
+              :scale (or params.scale 1)
+              :thicken (or params.thicken false)
+              :w (or params.w 100)
+              :x (or params.x 0)
+              :y (or params.y 0)
+              :moving false}]
     rect))
 
 (fn init-all [rect]
@@ -29,31 +32,31 @@
   (fade.init rect)
 )
 
-(fn update [rect dt] 
+(fn update [rect dt]
   (fade.update rect dt)
-  (when rect.colorChange 
+  (move.update rect dt)
+  (when rect.colorChange
     (color-change.update rect dt))
-  (when rect.grow 
+  (when rect.grow
     (grow-shrink.update rect dt))
-  (when (and (not rect.grow) rect.decreasing)
-    (grow-shrink.update rect dt))
-  (when rect.thicken 
+  (when rect.thicken
     (border.update rect dt)))
 
 (fn draw [rect]
   (love.graphics.setColor rect.r rect.g rect.b rect.alpha)
-  (if (= rect.line false)
+  (if (not rect.line)
       (love.graphics.rectangle :fill rect.x rect.y (* rect.w rect.scale) (* rect.h rect.scale))
       (do
         (love.graphics.setLineWidth rect.borderThickness)
         (love.graphics.rectangle :line rect.x rect.y (* rect.w rect.scale) (* rect.h rect.scale))
         (love.graphics.setLineWidth 1))))
 
-{: border
+{:border border
  :colorChange color-change
  :createRectangle create-rectangle
- : draw
- : fade
+ :draw draw
+ :fade fade
  :growShrink grow-shrink
- : update
- : init-all}	
+ :move move
+ :update update
+ :initAll init-all}
