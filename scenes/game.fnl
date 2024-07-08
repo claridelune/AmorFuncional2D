@@ -166,6 +166,7 @@
           )
         )
       )
+      (set moveBS 1)
       (set lastLabel 4)
     )
     (when (= (. audioState 2) 1)
@@ -187,7 +188,7 @@
 (fn draw []
 
   (rSquares)
-  (if moveBS
+  (if (= moveBS 1)
     (moveBigS)
   )
   (love.graphics.clear 0 0 0)

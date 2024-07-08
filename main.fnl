@@ -4,6 +4,9 @@
   (fennel.dofile "scenes/testBeats.fnl")
   (fennel.dofile "testAnimation.fnl")
 ])
+(local moonshine (require :moonshine))
+
+(var effect nil)
 
 (var currentScene 2) ; set starting scene
 ;; every scene must have a load, update, draw and keypressed functions
@@ -13,6 +16,14 @@
 ;; also check if audioConfig and testBeats work plz
 
 (fn love.load []
+  ;(set effect (moonshine.chain moonshine.effects.dmg))
+  ;(set effect (effect.chain moonshine.effects.scanlines))
+  (set effect (moonshine.chain moonshine.effects.crt))
+  (set effect (effect.chain moonshine.effects.glow))
+  ;(set effect.dmg.palette [[0 0 0] [100 125 125] [125 125 255] [255 255 255]])
+  (set effect.crt.distortionFactor [1.06 1.065])
+  (set effect.crt.feather 0.05)
+  (set effect.glow.strength 10)
   ((. (. scenes currentScene) :load))
 )
 
@@ -26,7 +37,7 @@
 )
 
 (fn love.draw []
-  ((. (. scenes currentScene) :draw))
+  (effect (. (. scenes currentScene) :draw))
 )
 
 (fn love.keypressed [key]

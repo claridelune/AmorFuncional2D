@@ -5,6 +5,7 @@
 
 (var debug1 0)
 (var debug2 0)
+(var debug3 0)
 
 (var config false)
 
@@ -37,6 +38,8 @@
 (fn advanceTarget []
   (if (= (length targets) 0)
     (set currentTargetTime -1)
+    (= (length targets) 1)
+    (set currentTargetTime (+ currentTargetTime (beats.getBeatTimeComplete)))
     (do
       (set currentTarget (% (+ currentTarget 1) (length targets)))
       (set currentTargetTime (beats.getBeatTime (. targets (+ 1 currentTarget))))
@@ -46,7 +49,7 @@
 
 (fn update [dt]
   [(if (and (and (not= currentTargetTime -1) (< currentTargetTime (- (+ (beats.getCurrentAudioTime) (. _G :offsetInput)) windowOk))) (not config))
-    (do (advanceTarget) 1)
+    (do (advanceTarget) (set debug3 (+ debug3 1)) 1)
     0
   )
   (let [bb (beats.update dt)]
@@ -76,6 +79,8 @@
     ;(love.graphics.print (. targets (+ currentTarget 1)) 950 25)
     (love.graphics.print (+ currentTarget 1) 950 25)
   )
+  (love.graphics.print "Timeouts: " 900 75)
+  (love.graphics.print debug3 1000 75)
   (beats.drawDebug)
 )
 

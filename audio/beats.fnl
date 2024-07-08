@@ -62,6 +62,10 @@
     )
 )
 
+(fn getBeatTimeComplete []
+    (* (rhythm.getBeatDuration) bSize)
+)
+
 (fn getCurrentAudioTime []
     (rhythm.getCurrentAudioTime)
 )
@@ -79,6 +83,7 @@
     : update
     : init
     : getBeatTime
+    : getBeatTimeComplete
     : getCurrentAudioTime
     : setNextBeats
     : stop

@@ -50,6 +50,10 @@
     (+ lastBeat (* upcoming beatDur))
 )
 
+(fn getBeatDuration []
+    beatDur
+)
+
 (fn stop []
     (when music
         (music:stop)
@@ -64,5 +68,6 @@
     : drawDebug
     : getUpcomingBeatTime
     : getCurrentAudioTime
+    : getBeatDuration
     : stop
 }
