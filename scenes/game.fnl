@@ -4,7 +4,7 @@
 (local labels [:Nope! :Ok :Great! :Perfect! :Miss! ""])
 (local colors [[1 0 0] [0 1 0] [0 1 0] [0 1 0] [1 0 0] [1 1 0]])
 
-(var songId 2)
+(var songId 3)
 (var bar 1)
 
 (var score 0)
