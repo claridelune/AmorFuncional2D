@@ -29,7 +29,7 @@
                                             :y (+ padding (* cuadrado bigy))
                                             :w (* cuadrado 2)
                                             :h (* cuadrado 2)
-                                            :borderThickness 4
+                                            :borderThickness 8
                                             :r 0
                                             :g 0
                                             :b 1
@@ -63,8 +63,9 @@
   )
 )
 
-(fn valid [xx yy]
+(fn valid [xx yy pressedCorrectly]
   (var return false)
+  (local incorrectSquare nil)
   (for [i nSquares 2 -1]
     (if (and (correct (+ xx (. (. listS i) 2)) (+ yy (. (. listS i) 3))) (not (. (. listS (- i 1)) 1)))
       (do
@@ -72,7 +73,14 @@
           (set return true)
         )
         (tset listS i 1 false)
-        (tset (. (. listS i) 4) :appearing false)))
+        (tset (. (. listS i) 4) :appearing false)
+        (tset (. (. listS i) 4) :grow true)
+        (if pressedCorrectly
+          (animations.setColor (. (. listS i) 4) 0.322 0.878 0.431)
+          (animations.setColor (. (. listS i) 4) 1 0.529 0)
+        )
+        )
+      )
   )
   (if (correct (+ xx (. (. listS 1) 2)) (+ yy (. (. listS 1) 3)))
     (do
@@ -80,7 +88,13 @@
         (set return true)
       )
       (tset listS 1 1 false)
-      (tset (. (. listS 1) 4) :appearing false)))
+      (tset (. (. listS 1) 4) :appearing false)
+      (tset (. (. listS 1) 4) :grow true)
+      (if pressedCorrectly
+        (animations.setColor (. (. listS 1) 4) 0.322 0.878 0.431)
+        (animations.setColor (. (. listS 1) 4) 1 0.529 0)
+      ))
+    )
   return
 )
 
@@ -156,7 +170,7 @@
     (when (= (. audioState 1) 1)
       (var i 0)
       (var j 0)
-      (while (not (valid i j))
+      (while (not (valid i j false))
         (if (and (= i 0) (= j 0))
           (set j 1)
           (if (and (= i 0) (= j 1))
@@ -227,7 +241,7 @@
     (var state (audio.checkBeatState))
     (if (not= state 0)
       [
-      (if (valid 0 0)
+      (if (valid 0 0 true)
         [(set lastLabel state)
         (set score (+ score (. vals (+ state 1))))
         (set moveBS 1)
@@ -241,7 +255,7 @@
     (var state (audio.checkBeatState))
     (if (not= state 0)
       [
-      (if (valid 0 1)
+      (if (valid 0 1 true)
         [(set lastLabel state)
         (set score (+ score (. vals (+ state 1))))
         (set moveBS 1)
@@ -255,7 +269,7 @@
     (var state (audio.checkBeatState))
     (if (not= state 0)
       [
-      (if (valid 1 0)
+      (if (valid 1 0 true)
         [(set lastLabel state)
         (set score (+ score (. vals (+ state 1))))
         (set moveBS 1)
@@ -268,7 +282,7 @@
     (var state (audio.checkBeatState))
     (if (not= state 0)
       [
-      (if (valid 1 1)
+      (if (valid 1 1 true)
         [(set lastLabel state)
         (set score (+ score (. vals (+ state 1))))
         (set moveBS 1)

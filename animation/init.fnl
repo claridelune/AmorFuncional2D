@@ -51,6 +51,11 @@
         (love.graphics.rectangle :line rect.x rect.y (* rect.w rect.scale) (* rect.h rect.scale))
         (love.graphics.setLineWidth 1))))
 
+(fn setColor [rect r g b]
+  (set rect.r r)
+  (set rect.g g)
+  (set rect.b b))
+
 {:border border
  :colorChange color-change
  :createRectangle create-rectangle
@@ -59,4 +64,5 @@
  :growShrink grow-shrink
  :move move
  :update update
+ :setColor setColor
  :initAll init-all}
