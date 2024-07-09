@@ -193,11 +193,11 @@
   )
   (love.graphics.clear 0 0 0)
 
-  (love.graphics.print score 200 400)
+  (love.graphics.print score 150 400)
   (let [cc (. colors (+ 1 lastLabel))]
     (love.graphics.setColor (. cc 1) (. cc 2) (. cc 3))
   )
-  (love.graphics.print (. labels (+ 1 lastLabel)) 200 300)
+  (love.graphics.print (. labels (+ 1 lastLabel)) 150 300)
   (love.graphics.setColor 0.5 0.5 0.5 0.5)
   (love.graphics.setLineWidth 1)
 

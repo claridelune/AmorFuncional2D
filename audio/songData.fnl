@@ -54,7 +54,7 @@
 (local songVolumes
     [
         0.3
-        0.6
+        0.1
     ]
 )
 
