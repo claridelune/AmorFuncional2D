@@ -144,6 +144,7 @@
 
 (fn load []
   (set bar 1)
+  (set songId (. _G :currSong))
   (let [barData (songData.getBeats songId bar)]
     (audio.init (. barData 1) (. barData 2) (songData.getSongBPM songId) 2 false (songData.getSongTitle songId) (songData.getSongVolume songId))
   )

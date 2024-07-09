@@ -2,8 +2,9 @@
   (fennel.dofile "scenes/game.fnl")
   (fennel.dofile "scenes/audioConfig.fnl")
   (fennel.dofile "scenes/testBeats.fnl")
-  (fennel.dofile "testAnimation.fnl")
+  (fennel.dofile "scenes/testAnimation.fnl")
   (fennel.dofile "scenes/mainMenu.fnl")
+  (fennel.dofile "scenes/selectLevel.fnl")
 ])
 (local moonshine (require :moonshine))
 
