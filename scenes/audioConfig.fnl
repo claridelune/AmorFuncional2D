@@ -60,6 +60,7 @@
     )
   )
   (when (= key "p")
+    (tset _G :currSong 1)
     (set changeScene 1)
   )
   (when (= key "r")
