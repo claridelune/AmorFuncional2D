@@ -44,7 +44,7 @@
   (love.graphics.setColor 1 1 0)
   (love.graphics.rectangle "line" 316 291 300 300)
   (love.graphics.setFont titleFont)
-  (love.graphics.print "GAME TITLE" 250 150)
+  (love.graphics.print "BeatMap" 250 150)
 )
 
 (fn keypressed [key]
