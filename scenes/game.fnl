@@ -18,7 +18,7 @@
 
 (var changeScene 0)
 
-(var fullscreen false)	
+;;(var fullscreen false)	
 
 (var padding (* (love.graphics.getHeight) 0.02))
 (var box (- (love.graphics.getHeight) (* 2 padding)) )
@@ -159,6 +159,12 @@
   (set moveBS 0))
 
 (fn load []
+  (set moveBS 1)
+  (for [i 1 nSquares 1]
+    (tset listS i [false 0 0 nil])
+  )
+  (set score 0)
+  (set lastLabel 5)
   (set bar 1)
   (set changeScene 0)
   (set songId (. _G :currSong))
@@ -219,7 +225,7 @@
   (let [cc (. colors (+ 1 lastLabel))]
     (love.graphics.setColor (. cc 1) (. cc 2) (. cc 3))
   )
-  (love.graphics.print (. labels (+ 1 lastLabel)) 150 300)
+  (love.graphics.print (. labels (+ 1 lastLabel)) 120 300)
   (love.graphics.setColor 0.5 0.5 0.5 0.5)
   (love.graphics.setLineWidth 1)
 
@@ -326,7 +332,7 @@
       (set lastLabel 0)
     )
   )
-  (when (and (not popUpMenu) (= key "o"))
+  (when (and (not popUpMenu) (= key "i"))
     (var state (audio.checkBeatState))
     (if (not= state 0)
       [
@@ -339,7 +345,7 @@
       (set lastLabel 0)
     )
   )
-  (when (and (not popUpMenu) (= key "k"))
+  (when (and (not popUpMenu) (= key "j"))
     (var state (audio.checkBeatState))
     (if (not= state 0)
       [
@@ -353,20 +359,20 @@
     )
   )
 
-  (when (= key "f5")
-    (if fullscreen 
-      [ (love.window.setFullscreen false )
-      (set fullscreen false)
-      ]
-      [ (love.window.setFullscreen true )
-      (set fullscreen true)
-      ]
-    )
-    (set padding (* (love.graphics.getHeight) 0.02))
-    (set box (- (love.graphics.getHeight) (* 2 padding)) )
-    (set cuadrado (/ box 6))
-    (set inicio (/ (- (love.graphics.getWidth) box) 2))  
-  )
+  ;;(when (= key "f5")
+  ;;  (if fullscreen 
+  ;;    [ (love.window.setFullscreen false )
+  ;;    (set fullscreen false)
+  ;;    ]
+  ;;    [ (love.window.setFullscreen true )
+  ;;    (set fullscreen true)
+  ;;    ]
+  ;;  )
+  ;;  (set padding (* (love.graphics.getHeight) 0.02))
+  ;;  (set box (- (love.graphics.getHeight) (* 2 padding)) )
+  ;;  (set cuadrado (/ box 6))
+  ;;  (set inicio (/ (- (love.graphics.getWidth) box) 2))  
+  ;;)
 
   (when (= key "escape")
     (love.event.quit))
