@@ -44,7 +44,10 @@
   (love.graphics.setColor 1 1 0)
   (love.graphics.rectangle "line" 316 291 300 300)
   (love.graphics.setFont titleFont)
-  (love.graphics.print "BeatMap" 250 150)
+  (love.graphics.setColor 0 0 1)
+  (love.graphics.print "Map" 425 180)
+  (love.graphics.setColor 1 1 0)
+  (love.graphics.print "Beat" 360 150)
 )
 
 (fn keypressed [key]
