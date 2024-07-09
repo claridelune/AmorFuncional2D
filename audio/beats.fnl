@@ -78,6 +78,10 @@
     (rhythm.stop)
 )
 
+(fn audioFinished []
+    (rhythm.audioFinished)
+)
+
 {
     : drawDebug
     : update
@@ -85,6 +89,7 @@
     : getBeatTime
     : getBeatTimeComplete
     : getCurrentAudioTime
+    : audioFinished
     : setNextBeats
     : stop
 }

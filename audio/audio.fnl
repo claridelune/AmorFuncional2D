@@ -129,12 +129,17 @@
   (beats.stop)
 )
 
+(fn audioFinished []
+  (beats.audioFinished)
+)
+
 {
   : init
   : advanceTarget
   : update
   : drawDebug
   : checkBeatState
+  : audioFinished
   : getBeatDiff
   : changeBeats
   : stop

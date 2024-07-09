@@ -6,6 +6,7 @@
   (set changeScene 0)
   (love.graphics.setLineWidth 4)
   (set titleFont (love.graphics.newFont :assets/Coolville.otf 100))
+  (tset _G :totalLevels 4)
 )
 
 (fn update [dt]
@@ -17,9 +18,9 @@
     xx (love.mouse.getX)
     yy (love.mouse.getY)
     gen (and (<= 750 xx) (<= xx 960))
-    ff (and gen (and (<= 300 yy) (< yy 336)))
-    ss (and gen (and (<= 400 yy) (< yy 436)))
-    tt (and gen (and (<= 500 yy) (< yy 536)))
+    ff (and gen (and (<= 300 yy) (< yy 330)))
+    ss (and gen (and (<= 400 yy) (< yy 430)))
+    tt (and gen (and (<= 500 yy) (< yy 530)))
     ]
     (if ff (love.graphics.setColor 1 1 1) (love.graphics.setColor 0.5 0.5 0.5))
     (love.graphics.print "Play" 750 300)

@@ -62,6 +62,14 @@
     (set started false)
 )
 
+(fn audioFinished []
+    (if music
+        (and (not (music:isPlaying)) started)
+        ;(and (music:isPlaying) started)
+        false
+    )
+)
+
 {
     : update
     : init
@@ -69,5 +77,6 @@
     : getUpcomingBeatTime
     : getCurrentAudioTime
     : getBeatDuration
+    : audioFinished
     : stop
 }
