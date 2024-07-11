@@ -1,4 +1,4 @@
-(local levels [1 2 3 4])
+(local levels [1 2 3 4 5])
 
 (var changeScene 0)
 
