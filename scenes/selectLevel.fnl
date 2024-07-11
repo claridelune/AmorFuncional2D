@@ -1,5 +1,3 @@
-(local levels [1 2 3 4 5])
-
 (var changeScene 0)
 
 (var titleFont nil)
@@ -21,7 +19,7 @@
         yy (love.mouse.getY)
         gen (and (<= 300 yy) (<= yy 400))
     ]
-        (each [index value (ipairs levels)]
+        (for [index 1 (. _G :totalLevels)]
             (let [ini (+ 325 (* (- index 1) 100)) pos (and gen (and (< ini xx) (<= xx (+ ini 100))))]
                 (if pos (love.graphics.setColor 0 0 1) (love.graphics.setColor 0.5 0.5 0.5))
                 (love.graphics.rectangle "line" ini 300 100 100)
@@ -32,7 +30,7 @@
                     (love.graphics.print index (+ 357 (* (- index 1) 100)) 327)
                 )
                 (when (and pos (love.mouse.isDown 1))
-                    (tset _G :currSong value)
+                    (tset _G :currSong index)
                     (set changeScene 1)
                 )
             )

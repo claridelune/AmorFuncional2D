@@ -6,7 +6,7 @@
   (set changeScene 0)
   (love.graphics.setLineWidth 4)
   (set titleFont (love.graphics.newFont :assets/Coolville.otf 100))
-  (tset _G :totalLevels 4)
+  (tset _G :totalLevels 5)
 )
 
 (fn update [dt]
