@@ -34,7 +34,7 @@
   (love.graphics.print "Programmers:" 500 (+ creditsY 110))
   (love.graphics.setFont textFont)
   (love.graphics.setColor 0.5 0.5 0.5)
-  (love.graphics.print "Mariana Caceres" 500 (+ creditsY 170))
+  (love.graphics.print "runosake" 500 (+ creditsY 170))
   (love.graphics.print "Paul Becerra" 500 (+ creditsY 230))
   (love.graphics.print "claridelune" 500 (+ creditsY 290))
 

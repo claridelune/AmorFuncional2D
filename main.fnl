@@ -6,6 +6,7 @@
   (fennel.dofile "scenes/mainMenu.fnl")
   (fennel.dofile "scenes/selectLevel.fnl")
   (fennel.dofile "scenes/credits.fnl")
+  (fennel.dofile "scenes/howToPlay.fnl")
 ])
 (local moonshine (require :moonshine))
 
