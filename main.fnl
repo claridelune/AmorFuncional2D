@@ -5,6 +5,7 @@
   (fennel.dofile "scenes/testAnimation.fnl")
   (fennel.dofile "scenes/mainMenu.fnl")
   (fennel.dofile "scenes/selectLevel.fnl")
+  (fennel.dofile "scenes/credits.fnl")
 ])
 (local moonshine (require :moonshine))
 

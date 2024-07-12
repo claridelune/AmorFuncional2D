@@ -1,2 +1,6 @@
 /loveDir
 fennel.lua
+/node_modules
+/makelove-build
+package-lock.json
+package.json
