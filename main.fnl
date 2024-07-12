@@ -9,7 +9,6 @@
 (local moonshine (require :moonshine))
 
 (var effect nil)
-(var font nil)
 
 (var currentScene 5) ; set starting scene
 ;; every scene must have a load, update, draw and keypressed functions
@@ -27,7 +26,7 @@
   (set effect.crt.distortionFactor [1.06 1.065])
   (set effect.crt.feather 0.05)
   (set effect.glow.strength 10)
-  (set font (love.graphics.newFont :assets/Coolville.otf 36))
+  (tset _G :globalFont (love.graphics.newFont :assets/Coolville.otf 36))
   ((. (. scenes currentScene) :load))
 )
 
@@ -41,7 +40,7 @@
 )
 
 (fn love.draw []
-  (love.graphics.setFont font)
+  (love.graphics.setFont (. _G :globalFont))
   (effect (. (. scenes currentScene) :draw))
 )
 

@@ -18,6 +18,7 @@
         xx (love.mouse.getX)
         yy (love.mouse.getY)
         gen (and (<= 300 yy) (<= yy 400))
+        cond (and (and (<= 250 xx) (<= xx 575)) (and (<= 500 yy) (<= yy 536)))
     ]
         (for [index 1 (. _G :totalLevels)]
             (let [ini (+ 325 (* (- index 1) 100)) pos (and gen (and (< ini xx) (<= xx (+ ini 100))))]
@@ -34,6 +35,14 @@
                     (set changeScene 1)
                 )
             )
+        )
+        (if cond
+            (love.graphics.setColor 1 1 1)
+            (love.graphics.setColor 0.5 0.5 0.5)
+        )
+        (love.graphics.print "Return to main menu" 250 500)
+        (when (and cond (love.mouse.isDown 1))
+            (set changeScene 5)
         )
     )
 

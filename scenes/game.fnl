@@ -1,7 +1,7 @@
 (local audio (fennel.dofile "audio/audio.fnl"))
 (local animations (fennel.dofile "animation/init.fnl"))
 (local songData (fennel.dofile "audio/songData.fnl"))
-(local labels [:Nope! :Ok :Great! :Perfect! :Miss! ""])
+(local labels ["Nope!" "Ok " "Great!" "Perfect!" "Miss!" ""])
 (local colors [[1 0 0] [0 1 0] [0 1 0] [0 1 0] [1 0 0] [1 1 0]])
 (local beatAnimationDur 5)
 
@@ -251,13 +251,15 @@
   )
   (love.graphics.clear 0 0 0)
 
-  (love.graphics.print score 150 400)
-  (let [cc (. colors (+ 1 lastLabel))]
-    (love.graphics.setColor (. cc 1) (. cc 2) (. cc 3))
+  (let [posLeft 150 str1 (tostring score) str2 (. labels (+ 1 lastLabel))]
+    (love.graphics.print str1 (- posLeft (/ ((. (. _G :globalFont) :getWidth) (. _G :globalFont) str1) 2.0)) 400)
+    (let [cc (. colors (+ 1 lastLabel))]
+      (love.graphics.setColor (. cc 1) (. cc 2) (. cc 3))
+    )
+    (love.graphics.print str2 (+ (- posLeft (/ ((. (. _G :globalFont) :getWidth) (. _G :globalFont) str2) 2.0)) 10) 300)
   )
-  (love.graphics.print (. labels (+ 1 lastLabel)) 120 300)
   (love.graphics.setColor 0.5 0.5 0.5 0.5)
-  (love.graphics.setLineWidth 1)
+  (love.graphics.setLineWidth 2)
 
   (when (> lastBeat 0)
     (love.graphics.push)
@@ -295,6 +297,7 @@
       xx (love.mouse.getX)
       yy (love.mouse.getY)
       w2100 (- (/ (love.graphics.getWidth) 2) 100)
+      strScore (tostring score)
       gen (and (<= w2100 xx) (<= xx (+ w2100 170)))
       next (< songId (. _G :totalLevels))
     ]
@@ -335,7 +338,7 @@
       )
       (love.graphics.print "Main Menu" (+ w2100 8) (if next 600 500))
       (love.graphics.setColor 1 1 1)
-      (love.graphics.print score (+ w2100 55) 300)
+      (love.graphics.print strScore (+ (- w2100 (/ ((. (. _G :globalFont) :getWidth) (. _G :globalFont) strScore) 2)) 90) 300)
       (love.graphics.setColor 1 1 0)
       (love.graphics.setFont titleFont)
       (love.graphics.print "Level Completed!" (- w2100 180) 200)

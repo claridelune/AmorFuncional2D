@@ -35,9 +35,10 @@
   (love.graphics.setColor 1 1 0)
   (love.graphics.print (.. "Press s to " (if keep :stop :start) " config") 100 250)
   (love.graphics.print "Press p to play" 100 300)
-  (love.graphics.print "Press r to reset offset" 100 350)
-  (love.graphics.print "Current Offset:" 100 450)
-  (love.graphics.print (. _G :offsetInput) 400 450)
+  (love.graphics.print "Press m to return to main menu" 100 350)
+  (love.graphics.print "Press r to reset offset" 100 400)
+  (love.graphics.print "Current Offset:" 100 500)
+  (love.graphics.print (. _G :offsetInput) 400 500)
   ;(audio.drawDebug)
   (each [index value (ipairs diffs)]
     (love.graphics.print value 700 (+ 200 (* index 25)))
@@ -45,7 +46,7 @@
 )
 
 (fn keypressed [key]
-  (if (or (= key "s") (= key "p"))
+  (if (or (or (= key "s") (= key "p")) (= key "m"))
     (do 
         (set keep (not keep))
         (if keep
@@ -62,6 +63,9 @@
   (when (= key "p")
     (tset _G :currSong 1)
     (set changeScene 1)
+  )
+  (when (= key "m")
+    (set changeScene 5)
   )
   (when (= key "r")
     (updateOffsetInput)

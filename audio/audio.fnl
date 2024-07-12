@@ -53,7 +53,7 @@
     0
   )
   (let [bb (beats.update dt)]
-    (when (and config (= bb 1))
+    (when (and config (= (. bb 1) 1))
       (advanceTarget)
     )
     bb
