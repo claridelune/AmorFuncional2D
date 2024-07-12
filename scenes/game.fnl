@@ -3,11 +3,14 @@
 (local songData (fennel.dofile "audio/songData.fnl"))
 (local labels [:Nope! :Ok :Great! :Perfect! :Miss! ""])
 (local colors [[1 0 0] [0 1 0] [0 1 0] [0 1 0] [1 0 0] [1 1 0]])
+(local beatAnimationDur 5)
 
 (var songId 4)
 (var bar 1)
 (var popUpMenu false)
 (local titleFont (love.graphics.newFont :assets/Coolville.otf 70))
+(var lastBeat -1)
+(var everyNBeats 0)
 
 (var score 0)
 (local vals [0 50 100 200])
@@ -172,6 +175,7 @@
   (let [barData (songData.getBeats songId bar)]
     (audio.init (. barData 1) (. barData 2) (songData.getSongBPM songId) 2 false (songData.getSongTitle songId) (songData.getSongVolume songId))
   )
+  (set lastBeat -1)
 )
 
 (fn update [dt]
@@ -194,10 +198,19 @@
       (set moveBS 1)
       (set lastLabel 4)
     )
-    (when (= (. audioState 2) 1)
+    (when (= (. (. audioState 2) 1) 1)
       (set bar (+ 1 bar))
       (let [barData (songData.getBeats songId bar)]
         (audio.changeBeats (. barData 1) (. barData 2))
+      )
+    )
+    (when (= (. (. audioState 2) 2) 1)
+      (if (= everyNBeats 0)
+        (do 
+          (set lastBeat beatAnimationDur)
+          (set everyNBeats 1)
+        )
+        (set everyNBeats (- everyNBeats 1))
       )
     )
   )
@@ -208,6 +221,8 @@
   )
 
   (set popUpMenu (audio.audioFinished))
+
+  (set lastBeat (- lastBeat 1))
 
   changeScene
 )
@@ -229,6 +244,14 @@
   (love.graphics.setColor 0.5 0.5 0.5 0.5)
   (love.graphics.setLineWidth 1)
 
+  (when (> lastBeat 0)
+    (love.graphics.push)
+    (let [ww (love.graphics.getWidth) hh (love.graphics.getHeight)]
+      (love.graphics.translate (* ww -0.0025) (* hh -0.0025))
+      (love.graphics.scale 1.005 1.005)
+    )
+  )
+
   (for [i 0 (* cuadrado 6) cuadrado]
   (love.graphics.line inicio (+ padding i) (+ inicio (* cuadrado 6)) (+ padding i))
   (love.graphics.line (+ i inicio) padding (+ i inicio) (+ padding (* cuadrado 6)))
@@ -244,6 +267,10 @@
   (for [i 1 nSquares 1]
         (animations.draw (. (. listS i) 4))
         (love.graphics.print i (+ inicio (* cuadrado (+ (. (. listS i) 2) 0.5))) (+ padding (* cuadrado (+ (. (. listS i) 3) 0.5))))
+  )
+
+  (when (> lastBeat 0)
+    (love.graphics.pop)
   )
 
   (when popUpMenu

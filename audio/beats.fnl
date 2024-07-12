@@ -41,9 +41,9 @@
                 (tocSound:stop)
                 (tocSound:play)
             )
-            (if (= currBeat (- bSize 1)) 1 0)
+            [(if (= currBeat (- bSize 1)) 1 0) 1]
         )
-        0
+        [0 0]
     )
 )
 
