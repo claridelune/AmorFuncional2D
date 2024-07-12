@@ -11,6 +11,8 @@
 (local titleFont (love.graphics.newFont :assets/Coolville.otf 70))
 (var lastBeat -1)
 (var everyNBeats 0)
+(var newSquares 0)
+(var updateBoard true)
 
 (var score 0)
 (local vals [0 50 100 200])
@@ -41,7 +43,7 @@
                                             :line true}))
 (animations.initAll bigSquare)
 
-(var nSquares 4)
+(var nSquares 8)
 (var listS [])
 (for [i 1 nSquares 1]
   (table.insert listS [false 0 0 nil])
@@ -107,7 +109,8 @@
 
 (fn rSquares []
   (if (not (. (. listS nSquares) 1))  ;; Si el último cuadrado no está activo
-    [(set bigx (love.math.random 0 4))
+    [(set nSquares newSquares)
+    (set bigx (love.math.random 0 4))
     (set bigy (love.math.random 0 4))
     (for [k 1 nSquares 1]
       (for [i 1 nSquares 1]
@@ -143,27 +146,31 @@
           (animations.initAll rect)
           (tset listS i [true x y rect]))
       )
-    )]
+    )
+    (set updateBoard false)]
   )
 )
 
 (fn moveBigS []
   (var i 1)
-  (while (not (. (. listS i) 1))
+  (while (and (<= i nSquares) (not (. (. listS i) 1)))
     (set i (+ 1 i))
   )
-  (let [target-x (if (= (% (. (. listS i) 2) 2) (% bigx 2))
-                   (. (. listS i) 2)
-                   (- (. (. listS i) 2) 1))
-        target-y (if (= (% (. (. listS i) 3) 2) (% bigy 2))
-                   (. (. listS i) 3)
-                   (- (. (. listS i) 3) 1))]
-    (animations.move.init bigSquare (+ inicio (* cuadrado target-x)) (+ padding (* cuadrado target-y)) 0.1))
-  (set moveBS 0))
+  (when (<= i nSquares)
+    (let [target-x (if (= (% (. (. listS i) 2) 2) (% bigx 2))
+                    (. (. listS i) 2)
+                    (- (. (. listS i) 2) 1))
+          target-y (if (= (% (. (. listS i) 3) 2) (% bigy 2))
+                    (. (. listS i) 3)
+                    (- (. (. listS i) 3) 1))]
+      (animations.move.init bigSquare (+ inicio (* cuadrado target-x)) (+ padding (* cuadrado target-y)) 0.1))
+    (set moveBS 0)
+  )
+)
 
 (fn load []
   (set moveBS 1)
-  (for [i 1 nSquares 1]
+  (for [i 1 8 1]
     (tset listS i [false 0 0 nil])
   )
   (set score 0)
@@ -174,8 +181,11 @@
   (set popUpMenu false)
   (let [barData (songData.getBeats songId bar)]
     (audio.init (. barData 1) (. barData 2) (songData.getSongBPM songId) 2 false (songData.getSongTitle songId) (songData.getSongVolume songId))
+    (set newSquares (length (. barData 2)))
   )
   (set lastBeat -1)
+  (set updateBoard true)
+  (set nSquares 1)
 )
 
 (fn update [dt]
@@ -202,7 +212,10 @@
       (set bar (+ 1 bar))
       (let [barData (songData.getBeats songId bar)]
         (audio.changeBeats (. barData 1) (. barData 2))
+        (set newSquares (length (. barData 2)))
+        (set updateBoard true)
       )
+
     )
     (when (= (. (. audioState 2) 2) 1)
       (if (= everyNBeats 0)
@@ -230,7 +243,9 @@
 
 (fn draw []
 
-  (rSquares)
+  (when updateBoard
+    (rSquares)
+  )
   (if (= moveBS 1)
     (moveBigS)
   )
@@ -247,8 +262,8 @@
   (when (> lastBeat 0)
     (love.graphics.push)
     (let [ww (love.graphics.getWidth) hh (love.graphics.getHeight)]
-      (love.graphics.translate (* ww -0.0025) (* hh -0.0025))
-      (love.graphics.scale 1.005 1.005)
+      (love.graphics.translate (* ww -0.0035) (* hh -0.0035))
+      (love.graphics.scale 1.007 1.007)
     )
   )
 
