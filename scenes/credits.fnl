@@ -3,6 +3,7 @@
 (var subtitleFont nil)
 (var textFont nil)
 (var creditsY 600)
+(var creditsX 400)
 (local ending (love.audio.newSource "assets/swimming_fever.mp3" :stream))
 
 (fn load []
@@ -18,61 +19,80 @@
 
 (fn update [dt]
   (set creditsY (- creditsY (* dt 50)))
+
+  (when (< creditsY -1200)
+    (set changeScene 5) 
+    (ending:stop)
+  )
+
   changeScene
 )
 
 (fn draw []
   (love.graphics.setFont titleFont)
   (love.graphics.setColor 0 0 1)
-  (love.graphics.print "Map" 525 creditsY)
+  (love.graphics.print "Map" (+ creditsX 225) creditsY)
   (love.graphics.setColor 1 1 0)
-  (love.graphics.print "Beat" 460 (- creditsY 30))
+  (love.graphics.print "Beat" (+ creditsX 160) (- creditsY 30))
 
   
   (love.graphics.setFont subtitleFont)
   (love.graphics.setColor 1 1 1)
-  (love.graphics.print "Programmers:" 500 (+ creditsY 110))
+  (love.graphics.print "Programmers:" creditsX (+ creditsY 110))
   (love.graphics.setFont textFont)
   (love.graphics.setColor 0.5 0.5 0.5)
-  (love.graphics.print "runosake" 500 (+ creditsY 170))
-  (love.graphics.print "Paul Becerra" 500 (+ creditsY 230))
-  (love.graphics.print "claridelune" 500 (+ creditsY 290))
+  (love.graphics.print "runosake" creditsX (+ creditsY 170))
+  (love.graphics.print "Paul Becerra" creditsX (+ creditsY 230))
+  (love.graphics.print "claridelune" creditsX (+ creditsY 290))
 
   (love.graphics.setFont subtitleFont)
   (love.graphics.setColor 1 1 1)
-  (love.graphics.print "Music:" 500 (+ creditsY 370))
+  (love.graphics.print "Music:" creditsX (+ creditsY 370))
 
   (love.graphics.setFont textFont)
   (love.graphics.setColor 0.5 0.5 0.5)
-  (love.graphics.print "BitCrushing" 500 (+ creditsY 430))
-  (love.graphics.print "Author:" 500 (+ creditsY 470))
-  (love.graphics.print "Victor Leao" 500 (+ creditsY 510))
+  (love.graphics.print "BitCrushing" creditsX (+ creditsY 430))
+  (love.graphics.print "Author:" creditsX (+ creditsY 470))
+  (love.graphics.print "Victor Leao" creditsX (+ creditsY 510))
 
-  (love.graphics.print "Mandatory Overtime" 500 (+ creditsY 570))
-  (love.graphics.print "Author:" 500 (+ creditsY 610))
-  (love.graphics.print "Joth" 500 (+ creditsY 650))
+  (love.graphics.print "Mandatory Overtime" creditsX (+ creditsY 570))
+  (love.graphics.print "Author:" creditsX (+ creditsY 610))
+  (love.graphics.print "Joth" creditsX (+ creditsY 650))
 
-  (love.graphics.print "On My Way [8 Bit Loop]" 500 (+ creditsY 710))
-  (love.graphics.print "Author:" 500 (+ creditsY 750))
-  (love.graphics.print "DeltaBreaker" 500 (+ creditsY 790))
+  (love.graphics.print "On My Way [8 Bit Loop]" creditsX (+ creditsY 710))
+  (love.graphics.print "Author:" creditsX (+ creditsY 750))
+  (love.graphics.print "DeltaBreaker" creditsX (+ creditsY 790))
 
-  (love.graphics.print "Cute March Music" 500 (+ creditsY 850))
-  (love.graphics.print "Author:" 500 (+ creditsY 890))
-  (love.graphics.print "DeltaBreaker" 500 (+ creditsY 930))
+  (love.graphics.print "Cute March Music" creditsX (+ creditsY 850))
+  (love.graphics.print "Author:" creditsX (+ creditsY 890))
+  (love.graphics.print "DeltaBreaker" creditsX (+ creditsY 930))
 
-  (love.graphics.print "Swimming Fever" 500 (+ creditsY 990))
-  (love.graphics.print "Author:" 500 (+ creditsY 1040))
-  (love.graphics.print "C418" 500 (+ creditsY 1080))
+  (love.graphics.print "Swimming Fever" creditsX (+ creditsY 990))
+  (love.graphics.print "Author:" creditsX (+ creditsY 1040))
+  (love.graphics.print "C418" creditsX (+ creditsY 1080))
+
+  (let [xx (love.mouse.getX) yy (love.mouse.getY)]
+    (if (and (and (> xx 890) (< xx 985)) (and (> yy 100) (< yy 125)))
+      (love.graphics.setColor 1 1 1)
+      (love.graphics.setColor 0.5 0.5 0.5)
+    )
+  )
+  (love.graphics.print "Return" 900 100)
 )
 
-(fn keypressed [key]
-  (when (= key "escape")
-    (love.event.quit))
+
+(fn mousepressed [xx yy button]
+  (when (= button 1)
+    (when (and (and (> xx 890) (< xx 985)) (and (> yy 100) (< yy 125)))
+      (set changeScene 5) 
+      (ending:stop)
+    )
+  )
 )
 
 {
   :load load
   :update update
   :draw draw
-  :keypressed keypressed
+  :mousepressed mousepressed
 }

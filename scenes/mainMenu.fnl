@@ -34,22 +34,6 @@
     (love.graphics.print "How To Play" 750 465)
     (if qq (love.graphics.setColor 1 1 1) (love.graphics.setColor 0.5 0.5 0.5))
     (love.graphics.print "Credits" 750 520)
-    (when (and ff (love.mouse.isDown 1))
-      (tset _G :currSong 1)
-      (set changeScene 1)
-    )
-    (when (and ss (love.mouse.isDown 1))
-      (set changeScene 6)
-    )
-    (when (and tt (love.mouse.isDown 1))
-      (set changeScene 2)
-    )
-    (when (and cc (love.mouse.isDown 1))
-      (set changeScene 8)
-    )
-    (when (and qq (love.mouse.isDown 1))
-      (set changeScene 7)
-    )
   )
   (love.graphics.setColor 0 0 1)
   (love.graphics.rectangle "line" 325 300 300 300)
@@ -62,12 +46,39 @@
   (love.graphics.print "Beat" 360 150)
 )
 
-(fn keypressed [key]
+(fn mousepressed [xx yy button]
+  (when (= button 1)
+    (let [
+      gen (and (<= 750 xx) (<= xx 960))
+      ff (and gen (and (<= 300 yy) (< yy 330)))
+      ss (and gen (and (<= 355 yy) (< yy 385)))
+      tt (and gen (and (<= 410 yy) (< yy 440)))
+      cc (and gen (and (<= 465 yy) (< yy 495)))
+      qq (and gen (and (<= 520 yy) (< yy 550)))
+    ]
+      (when ff
+        (tset _G :currSong 1)
+        (set changeScene 1)
+      )
+      (when ss
+        (set changeScene 6)
+      )
+      (when tt
+        (set changeScene 2)
+      )
+      (when cc
+        (set changeScene 8)
+      )
+      (when qq
+        (set changeScene 7)
+      )
+    )
+  )
 )
 
 {
   : load
   : update
   : draw
-  : keypressed
+  : mousepressed
 }

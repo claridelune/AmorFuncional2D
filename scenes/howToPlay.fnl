@@ -228,9 +228,6 @@
             (love.graphics.setColor 0.5 0.5 0.5)
         )
         (love.graphics.print "Return to main menu" 250 650)
-        (when (and cond (love.mouse.isDown 1))
-            (set changeScene 5)
-        )
     )
 
     (love.graphics.setColor 1 1 1 0.5)
@@ -247,12 +244,21 @@
     (love.graphics.print "HOW TO PLAY" 250 100)
 )
 
-(fn keypressed [key]
+(fn mousepressed [xx yy button]
+  (when (= button 1)
+    (let [
+      cond (and (and (<= 250 xx) (<= xx 575)) (and (<= 650 yy) (<= yy 686)))
+    ]
+      (when cond
+        (set changeScene 5)
+      )
+    )
+  )
 )
 
 {
   : load
   : update
   : draw
-  : keypressed
+  : mousepressed
 }

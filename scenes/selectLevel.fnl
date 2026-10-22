@@ -30,10 +30,6 @@
                     (love.graphics.rectangle "line" (- ini 8) 292 100 100)
                     (love.graphics.print index (+ 357 (* (- index 1) 100)) 327)
                 )
-                (when (and pos (love.mouse.isDown 1))
-                    (tset _G :currSong index)
-                    (set changeScene 1)
-                )
             )
         )
         (if cond
@@ -41,9 +37,6 @@
             (love.graphics.setColor 0.5 0.5 0.5)
         )
         (love.graphics.print "Return to main menu" 250 500)
-        (when (and cond (love.mouse.isDown 1))
-            (set changeScene 5)
-        )
     )
 
     (love.graphics.setColor 1 1 0)
@@ -51,12 +44,30 @@
     (love.graphics.print "SELECT LEVEL" 250 150)
 )
 
-(fn keypressed [key]
+(fn mousepressed [xx yy button]
+  (when (= button 1)
+    (let [
+        gen (and (<= 300 yy) (<= yy 400))
+        cond (and (and (<= 250 xx) (<= xx 575)) (and (<= 500 yy) (<= yy 536)))
+    ]
+        (for [index 1 (. _G :totalLevels)]
+            (let [ini (+ 325 (* (- index 1) 100)) pos (and gen (and (< ini xx) (<= xx (+ ini 100))))]
+                (when pos
+                    (tset _G :currSong index)
+                    (set changeScene 1)
+                )
+            )
+        )
+        (when cond
+            (set changeScene 5)
+        )
+    )
+  )
 )
 
 {
   : load
   : update
   : draw
-  : keypressed
+  : mousepressed
 }

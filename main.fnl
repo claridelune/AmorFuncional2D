@@ -13,7 +13,8 @@
 (var effect nil)
 
 (var currentScene 5) ; set starting scene
-;; every scene must have a load, update, draw and keypressed functions
+;; every scene must have a load, update and draw functions
+;; every scene MAY have keypressed and mousepressed functions
 ;; the update function must return 0 (no scene change) or a number indicating the
 ;; index of another scene (scene change)
 ;; scenes must be in the scene directory(??)
@@ -47,5 +48,13 @@
 )
 
 (fn love.keypressed [key]
-  ((. (. scenes currentScene) :keypressed) key)
+  (let [f (. (. scenes currentScene) :keypressed)]
+    (when f (f key))
+  )
+)
+
+(fn love.mousepressed [x y button]
+  (let [f (. (. scenes currentScene) :mousepressed)]
+    (when f (f x y button))
+  )
 )

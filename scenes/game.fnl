@@ -190,40 +190,45 @@
 
 (fn update [dt]
   (animations.update bigSquare dt)
-  (let [audioState (audio.update dt)]
-    (when (= (. audioState 1) 1)
-      (var i 0)
-      (var j 0)
-      (while (not (valid i j false))
-        (if (and (= i 0) (= j 0))
-          (set j 1)
-          (if (and (= i 0) (= j 1))
-            (set i 1)
-            (if (and (= i 1) (= j 1))
-              (set j 0) 
+
+  (when (not popUpMenu)
+    (let [audioState (audio.update dt)]
+      (when (= (. audioState 1) 1)
+        (var i 0)
+        (var j 0)
+        (while (not (valid i j false))
+          (if (and (= i 0) (= j 0))
+            (set j 1)
+            (if (and (= i 0) (= j 1))
+              (set i 1)
+              (if (and (= i 1) (= j 1))
+                (set j 0) 
+              )
             )
           )
         )
+        (set moveBS 1)
+        (set lastLabel 4)
       )
-      (set moveBS 1)
-      (set lastLabel 4)
-    )
-    (when (= (. (. audioState 2) 1) 1)
-      (set bar (+ 1 bar))
-      (let [barData (songData.getBeats songId bar)]
-        (audio.changeBeats (. barData 1) (. barData 2))
-        (set newSquares (length (. barData 2)))
-        (set updateBoard true)
-      )
-
-    )
-    (when (= (. (. audioState 2) 2) 1)
-      (if (= everyNBeats 0)
-        (do 
-          (set lastBeat beatAnimationDur)
-          (set everyNBeats 1)
+      (when (= (. (. audioState 2) 1) 1)
+        (set bar (+ 1 bar))
+        (let [barData (songData.getBeats songId bar)]
+          (when barData
+            (audio.changeBeats (. barData 1) (. barData 2))
+            (set newSquares (length (. barData 2)))
+            (set updateBoard true)
+          )
         )
-        (set everyNBeats (- everyNBeats 1))
+
+      )
+      (when (= (. (. audioState 2) 2) 1)
+        (if (= everyNBeats 0)
+          (do 
+            (set lastBeat beatAnimationDur)
+            (set everyNBeats 1)
+          )
+          (set everyNBeats (- everyNBeats 1))
+        )
       )
     )
   )
@@ -302,38 +307,19 @@
       next (< songId (. _G :totalLevels))
     ]
       (if (and gen (and (<= 400 yy) (< yy 430)))
-        (do
-          (when (love.mouse.isDown 1)
-            (audio.stop)
-            (load)
-          )
-          (love.graphics.setColor 1 1 1 1)
-        )
+        (love.graphics.setColor 1 1 1 1)
         (love.graphics.setColor 0.5 0.5 0.5 1)
       )
       (love.graphics.print "Play Again" w2100 400)
       (when next
         (if (and gen (and (<= 500 yy) (< yy 530)))
-          (do
-            (when (love.mouse.isDown 1)
-              (audio.stop)
-              (tset _G :currSong (+ songId 1))
-              (load)
-            )
-            (love.graphics.setColor 1 1 1 1)
-          )
+          (love.graphics.setColor 1 1 1 1)
           (love.graphics.setColor 0.5 0.5 0.5 1)
         )
         (love.graphics.print "Next Level" w2100 500)
       )
       (if (and gen (and (<= (if next 600 500) yy) (< yy (if next 630 530))))
-        (do
-          (when (love.mouse.isDown 1)
-            (set changeScene 5)
-            (audio.stop)
-          )
-          (love.graphics.setColor 1 1 1 1)
-        )
+        (love.graphics.setColor 1 1 1 1)
         (love.graphics.setColor 0.5 0.5 0.5 1)
       )
       (love.graphics.print "Main Menu" (+ w2100 8) (if next 600 500))
@@ -422,10 +408,35 @@
   (when (= key "escape")
     (love.event.quit))
 )
+
+(fn mousepressed [xx yy button]
+  (when (= button 1)
+    (let [
+      w2100 (- (/ (love.graphics.getWidth) 2) 100)
+      gen (and (<= w2100 xx) (<= xx (+ w2100 170)))
+      next (< songId (. _G :totalLevels))
+    ]
+      (when (and gen (and (<= 400 yy) (< yy 430)))
+          (audio.stop)
+          (load)
+      )
+      (when (and (and gen (and (<= 500 yy) (< yy 530)) next))
+          (audio.stop)
+          (tset _G :currSong (+ songId 1))
+          (load)
+      )
+      (when (and gen (and (<= (if next 600 500) yy) (< yy (if next 630 530))))
+        (set changeScene 5)
+        (audio.stop)
+      )
+    )
+  )
+)
     
 {
   :load load
   :update update
   :draw draw
   :keypressed keypressed
+  :mousepressed mousepressed
 }
