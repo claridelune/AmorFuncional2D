@@ -78,8 +78,20 @@
     (rhythm.stop)
 )
 
+(fn pause []
+    (rhythm.pause)
+)
+
+(fn play []
+    (rhythm.play)
+)
+
 (fn audioFinished []
     (rhythm.audioFinished)
+)
+
+(fn audioStarted []
+    (rhythm.audioStarted)
 )
 
 {
@@ -90,6 +102,9 @@
     : getBeatTimeComplete
     : getCurrentAudioTime
     : audioFinished
+    : audioStarted
     : setNextBeats
     : stop
+    : pause
+    : play
 }

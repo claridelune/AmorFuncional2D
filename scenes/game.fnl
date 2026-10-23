@@ -8,6 +8,7 @@
 (var songId 4)
 (var bar 1)
 (var popUpMenu false)
+(var paused false)
 (local titleFont (love.graphics.newFont :assets/Coolville.otf 70))
 (var lastBeat -1)
 (var everyNBeats 0)
@@ -179,6 +180,7 @@
   (set changeScene 0)
   (set songId (. _G :currSong))
   (set popUpMenu false)
+  (set paused false)
   (let [barData (songData.getBeats songId bar)]
     (audio.init (. barData 1) (. barData 2) (songData.getSongBPM songId) 2 false (songData.getSongTitle songId) (songData.getSongVolume songId))
     (set newSquares (length (. barData 2)))
@@ -191,7 +193,7 @@
 (fn update [dt]
   (animations.update bigSquare dt)
 
-  (when (not popUpMenu)
+  (when (not (or popUpMenu paused))
     (let [audioState (audio.update dt)]
       (when (= (. audioState 1) 1)
         (var i 0)
@@ -238,7 +240,9 @@
       (animations.update (. (. listS i) 4) dt))
   )
 
-  (set popUpMenu (audio.audioFinished))
+  (when (not paused)
+    (set popUpMenu (audio.audioFinished))
+  )
 
   (set lastBeat (- lastBeat 1))
 
@@ -295,7 +299,7 @@
     (love.graphics.pop)
   )
 
-  (when popUpMenu
+  (when (or paused popUpMenu)
     (love.graphics.setColor 0 0 0 0.6)
     (love.graphics.rectangle :fill 0 0 (love.graphics.getWidth) (love.graphics.getHeight))
     (let [
@@ -304,13 +308,16 @@
       w2100 (- (/ (love.graphics.getWidth) 2) 100)
       strScore (tostring score)
       gen (and (<= w2100 xx) (<= xx (+ w2100 170)))
-      next (< songId (. _G :totalLevels))
+      next (and (not paused) (< songId (. _G :totalLevels)))
     ]
       (if (and gen (and (<= 400 yy) (< yy 430)))
         (love.graphics.setColor 1 1 1 1)
         (love.graphics.setColor 0.5 0.5 0.5 1)
       )
-      (love.graphics.print "Play Again" w2100 400)
+      (if paused
+        (love.graphics.print "Restart" (+ w2100 25) 400)
+        (love.graphics.print "Play Again" w2100 400)
+      )
       (when next
         (if (and gen (and (<= 500 yy) (< yy 530)))
           (love.graphics.setColor 1 1 1 1)
@@ -324,18 +331,34 @@
       )
       (love.graphics.print "Main Menu" (+ w2100 8) (if next 600 500))
       (love.graphics.setColor 1 1 1)
-      (love.graphics.print strScore (+ (- w2100 (/ ((. (. _G :globalFont) :getWidth) (. _G :globalFont) strScore) 2)) 90) 300)
+      (when (not paused)
+        (love.graphics.print strScore (+ (- w2100 (/ ((. (. _G :globalFont) :getWidth) (. _G :globalFont) strScore) 2)) 90) 300)
+      )
       (love.graphics.setColor 1 1 0)
       (love.graphics.setFont titleFont)
-      (love.graphics.print "Level Completed!" (- w2100 180) 200)
+      (if paused
+        (love.graphics.print "Paused" (- w2100 17) 200)
+        (love.graphics.print "Level Completed!" (- w2100 180) 200)
+      )
     )
   )
+
+  (let [xx (love.mouse.getX) yy (love.mouse.getY)]
+    (if (and (and (and (> xx 1150) (< xx 1200)) (and (> yy 20) (< yy 60))) (audio.audioStarted))
+      (love.graphics.setColor 1 1 1)
+      (love.graphics.setColor 0.5 0.5 0.5)
+    )
+  )
+  (love.graphics.setLineWidth 3)
+  (love.graphics.circle "line" 1200 30 15)
+  (love.graphics.line 1196 23 1196 37)
+  (love.graphics.line 1204 23 1204 37)
 
   ;(audio.drawDebug)
 )
 
 (fn keypressed [key]
-  (when (and (not popUpMenu) (= key "r"))
+  (when (and (not (or paused popUpMenu)) (= key "r"))
     (var state (audio.checkBeatState))
     (if (not= state 0)
       [
@@ -349,7 +372,7 @@
     )
     
   )
-  (when (and (not popUpMenu) (= key "f"))
+  (when (and (not (or paused popUpMenu)) (= key "f"))
     (var state (audio.checkBeatState))
     (if (not= state 0)
       [
@@ -363,7 +386,7 @@
       (set lastLabel 0)
     )
   )
-  (when (and (not popUpMenu) (= key "i"))
+  (when (and (not (or paused popUpMenu)) (= key "i"))
     (var state (audio.checkBeatState))
     (if (not= state 0)
       [
@@ -376,7 +399,7 @@
       (set lastLabel 0)
     )
   )
-  (when (and (not popUpMenu) (= key "j"))
+  (when (and (not (or paused popUpMenu)) (= key "j"))
     (var state (audio.checkBeatState))
     (if (not= state 0)
       [
@@ -387,6 +410,19 @@
         (audio.advanceTarget)]
         (set lastLabel 0))]
       (set lastLabel 0)
+    )
+  )
+
+  (when (= key "escape")
+    (if paused
+      (do
+        (set paused false)
+        (audio.play)
+      )
+      (when (audio.audioStarted)
+        (set paused true)
+        (audio.pause)
+      )
     )
   )
 
@@ -404,26 +440,39 @@
   ;;  (set cuadrado (/ box 6))
   ;;  (set inicio (/ (- (love.graphics.getWidth) box) 2))  
   ;;)
-
-  (when (= key "escape")
-    (love.event.quit))
 )
 
 (fn mousepressed [xx yy button]
   (when (= button 1)
+    (let [xx (love.mouse.getX) yy (love.mouse.getY)]
+      (when (and (and (> xx 1150) (< xx 1200)) (and (> yy 20) (< yy 60)))
+        (if paused
+          (do
+            (set paused false)
+            (audio.play)
+          )
+          (when (audio.audioStarted)
+            (set paused true)
+            (audio.pause)
+          )
+        )
+      )
+    )
+  )
+  (when (and (= button 1) (or paused popUpMenu))
     (let [
       w2100 (- (/ (love.graphics.getWidth) 2) 100)
       gen (and (<= w2100 xx) (<= xx (+ w2100 170)))
-      next (< songId (. _G :totalLevels))
+      next (and (not paused) (< songId (. _G :totalLevels)))
     ]
       (when (and gen (and (<= 400 yy) (< yy 430)))
-          (audio.stop)
-          (load)
+        (audio.stop)
+        (load)
       )
       (when (and (and gen (and (<= 500 yy) (< yy 530)) next))
-          (audio.stop)
-          (tset _G :currSong (+ songId 1))
-          (load)
+        (audio.stop)
+        (tset _G :currSong (+ songId 1))
+        (load)
       )
       (when (and gen (and (<= (if next 600 500) yy) (< yy (if next 630 530))))
         (set changeScene 5)

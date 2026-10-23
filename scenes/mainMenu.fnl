@@ -23,7 +23,8 @@
     tt (and gen (and (<= 410 yy) (< yy 440)))
     cc (and gen (and (<= 465 yy) (< yy 495)))
     qq (and gen (and (<= 520 yy) (< yy 550)))
-    ]
+    ee (and gen (and (<= 575 yy) (< yy 605)))
+  ]
     (if ff (love.graphics.setColor 1 1 1) (love.graphics.setColor 0.5 0.5 0.5))
     (love.graphics.print "Play" 750 300)
     (if ss (love.graphics.setColor 1 1 1) (love.graphics.setColor 0.5 0.5 0.5))
@@ -34,6 +35,8 @@
     (love.graphics.print "How To Play" 750 465)
     (if qq (love.graphics.setColor 1 1 1) (love.graphics.setColor 0.5 0.5 0.5))
     (love.graphics.print "Credits" 750 520)
+    (if ee (love.graphics.setColor 1 1 1) (love.graphics.setColor 0.5 0.5 0.5))
+    (love.graphics.print "Exit" 750 575)
   )
   (love.graphics.setColor 0 0 1)
   (love.graphics.rectangle "line" 325 300 300 300)
@@ -55,6 +58,7 @@
       tt (and gen (and (<= 410 yy) (< yy 440)))
       cc (and gen (and (<= 465 yy) (< yy 495)))
       qq (and gen (and (<= 520 yy) (< yy 550)))
+      ee (and gen (and (<= 575 yy) (< yy 605)))
     ]
       (when ff
         (tset _G :currSong 1)
@@ -71,6 +75,9 @@
       )
       (when qq
         (set changeScene 7)
+      )
+      (when ee
+        (love.event.quit)
       )
     )
   )

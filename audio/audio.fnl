@@ -129,8 +129,20 @@
   (beats.stop)
 )
 
+(fn pause []
+  (beats.pause)
+)
+
+(fn play []
+  (beats.play)
+)
+
 (fn audioFinished []
   (beats.audioFinished)
+)
+
+(fn audioStarted []
+  (beats.audioStarted)
 )
 
 {
@@ -140,7 +152,10 @@
   : drawDebug
   : checkBeatState
   : audioFinished
+  : audioStarted
   : getBeatDiff
   : changeBeats
   : stop
+  : pause
+  : play
 }

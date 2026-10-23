@@ -62,12 +62,28 @@
     (set started false)
 )
 
+(fn pause []
+    (when music
+        (music:pause)
+    )
+)
+
+(fn play []
+    (when music
+        (music:play)
+    )
+)
+
 (fn audioFinished []
     (if music
         (and (not (music:isPlaying)) started)
         ;(and (music:isPlaying) started)
         false
     )
+)
+
+(fn audioStarted []
+    (and music started)
 )
 
 {
@@ -78,5 +94,8 @@
     : getCurrentAudioTime
     : getBeatDuration
     : audioFinished
+    : audioStarted
     : stop
+    : pause
+    : play
 }

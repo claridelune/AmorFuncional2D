@@ -17,8 +17,7 @@
 ;; every scene MAY have keypressed and mousepressed functions
 ;; the update function must return 0 (no scene change) or a number indicating the
 ;; index of another scene (scene change)
-;; scenes must be in the scene directory(??)
-;; also check if audioConfig and testBeats work plz
+;; scenes must be in the scene directory (not really...)
 
 (fn love.load []
   ;(set effect (moonshine.chain moonshine.effects.dmg))
