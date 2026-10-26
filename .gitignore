@@ -4,3 +4,6 @@ fennel.lua
 /makelove-build
 package-lock.json
 package.json
+/data/highScores.txt
+/data/highScores.txt.tmp
+/data/highScores.txt.bak

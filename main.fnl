@@ -1,3 +1,6 @@
+(local highScores (fennel.dofile "data/highScores.fnl"))
+(tset _G :highScores highScores)
+
 (local scenes [
   (fennel.dofile "scenes/game.fnl")
   (fennel.dofile "scenes/audioConfig.fnl")
@@ -20,6 +23,14 @@
 ;; scenes must be in the scene directory (not really...)
 
 (fn love.load []
+  (let [loaded (highScores.load)]
+    (when (not loaded)
+      (love.window.showMessageBox
+        "High scores unavailable"
+        "Existing scores could not be loaded. Their file will be preserved. New records will only be kept for this session."
+        "warning")
+    )
+  )
   ;(set effect (moonshine.chain moonshine.effects.dmg))
   (set effect (moonshine.chain moonshine.effects.scanlines))
   (set effect (effect.chain moonshine.effects.crt))

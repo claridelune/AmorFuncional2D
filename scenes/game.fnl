@@ -1,6 +1,7 @@
 (local audio (fennel.dofile "audio/audio.fnl"))
 (local animations (fennel.dofile "animation/init.fnl"))
 (local songData (fennel.dofile "audio/songData.fnl"))
+(local highScores (. _G :highScores))
 (local labels ["Nope!" "Ok " "Great!" "Perfect!" "Miss!" ""])
 (local colors [[1 0 0] [0 1 0] [0 1 0] [0 1 0] [1 0 0] [1 1 0]])
 (local beatAnimationDur 5)
@@ -10,12 +11,18 @@
 (var popUpMenu false)
 (var paused false)
 (local titleFont (love.graphics.newFont :assets/Coolville.otf 70))
+(local resultFont (love.graphics.newFont :assets/Coolville.otf 24))
 (var lastBeat -1)
 (var everyNBeats 0)
 (var newSquares 0)
 (var updateBoard true)
 
 (var score 0)
+(var songKey "")
+(var bestScore 0)
+(var newHighScore false)
+(var saveError nil)
+
 (local vals [0 50 100 200])
 
 (var lastLabel 5)
@@ -179,6 +186,10 @@
   (set bar 1)
   (set changeScene 0)
   (set songId (. _G :currSong))
+  (set songKey (songData.getSongTitle songId))
+  (set bestScore (highScores.getScore songKey))
+  (set newHighScore false)
+  (set saveError nil)
   (set popUpMenu false)
   (set paused false)
   (let [barData (songData.getBeats songId bar)]
@@ -240,8 +251,19 @@
       (animations.update (. (. listS i) 4) dt))
   )
 
-  (when (not paused)
-    (set popUpMenu (audio.audioFinished))
+  (when (and (not paused)
+           (not popUpMenu)
+           (audio.audioFinished))
+    (set popUpMenu true)
+
+    (set newHighScore (highScores.submitScore songKey score))
+    (set bestScore (highScores.getScore songKey))
+
+    (let [(saved errorMessage) (highScores.save)]
+      (when (not saved)
+        (set saveError (or errorMessage "Could not save high scores"))
+      )
+  )
   )
 
   (set lastBeat (- lastBeat 1))
@@ -260,12 +282,46 @@
   )
   (love.graphics.clear 0 0 0)
 
-  (let [posLeft 150 str1 (tostring score) str2 (. labels (+ 1 lastLabel))]
-    (love.graphics.print str1 (- posLeft (/ ((. (. _G :globalFont) :getWidth) (. _G :globalFont) str1) 2.0)) 400)
-    (let [cc (. colors (+ 1 lastLabel))]
-      (love.graphics.setColor (. cc 1) (. cc 2) (. cc 3))
+  (let [posLeft 150
+        font (. _G :globalFont)
+        strScore (tostring score)
+        strBest (.. "Best: " (tostring bestScore))
+        strLabel (. labels (+ 1 lastLabel))
+        cc (. colors (+ 1 lastLabel))
+        recordBeaten (> score bestScore)]
+
+    (love.graphics.setColor (. cc 1) (. cc 2) (. cc 3) 1)
+    (love.graphics.print strLabel
+                        (+ (- posLeft (/ (font:getWidth strLabel) 2)) 10)
+                        300)
+
+    (love.graphics.setColor 1 1 1 1)
+    (love.graphics.print "Score"
+                        (- posLeft (/ (font:getWidth "Score") 2))
+                        360)
+
+    (if recordBeaten
+      (love.graphics.setColor 0.322 0.878 0.431 1)
+      (love.graphics.setColor 1 1 1 1)
     )
-    (love.graphics.print str2 (+ (- posLeft (/ ((. (. _G :globalFont) :getWidth) (. _G :globalFont) str2) 2.0)) 10) 300)
+
+    (love.graphics.print strScore
+                        (- posLeft (/ (font:getWidth strScore) 2))
+                        400)
+
+    (love.graphics.setColor 1 1 0 1)
+    (love.graphics.print strBest
+                        (- posLeft (/ (font:getWidth strBest) 2))
+                        480)
+
+    (when recordBeaten
+      (love.graphics.setColor 0.322 0.878 0.431 1)
+      (love.graphics.print "Record beaten!"
+                          (- posLeft (/ (font:getWidth "Record beaten!") 2))
+                          530)
+    )
+
+    (love.graphics.setColor 1 1 1 1)
   )
   (love.graphics.setColor 0.5 0.5 0.5 0.5)
   (love.graphics.setLineWidth 2)
@@ -306,7 +362,10 @@
       xx (love.mouse.getX)
       yy (love.mouse.getY)
       w2100 (- (/ (love.graphics.getWidth) 2) 100)
-      strScore (tostring score)
+      centerX (/ (love.graphics.getWidth) 2)
+      font (. _G :globalFont)
+      strScore (.. "Score: " (tostring score))
+      strBest (.. "Best: " (tostring bestScore))
       gen (and (<= w2100 xx) (<= xx (+ w2100 170)))
       next (and (not paused) (< songId (. _G :totalLevels)))
     ]
@@ -332,8 +391,37 @@
       (love.graphics.print "Main Menu" (+ w2100 8) (if next 600 500))
       (love.graphics.setColor 1 1 1)
       (when (not paused)
-        (love.graphics.print strScore (+ (- w2100 (/ ((. (. _G :globalFont) :getWidth) (. _G :globalFont) strScore) 2)) 90) 300)
+      (love.graphics.setFont font)
+      (love.graphics.setColor 1 1 1 1)
+      (love.graphics.print strScore
+                          (- centerX (/ (font:getWidth strScore) 2))
+                          310)
+
+      (love.graphics.setFont resultFont)
+      (love.graphics.setColor 1 1 0 1)
+      (love.graphics.print strBest
+                          (- centerX (/ (resultFont:getWidth strBest) 2))
+                          355)
+
+      (when newHighScore
+        (love.graphics.setColor 0.322 0.878 0.431 1)
+        (love.graphics.print "New High Score!"
+                            (- centerX (/ (resultFont:getWidth "New High Score!") 2))
+                            280)
       )
+
+      (when saveError
+        (let [message "Could not save high scores. Changes may be lost on exit."]
+          (love.graphics.setColor 1 0.529 0 1)
+          (love.graphics.print message
+                              (- centerX (/ (resultFont:getWidth message) 2))
+                              660)
+        )
+      )
+
+      (love.graphics.setFont font)
+      (love.graphics.setColor 1 1 1 1)
+    )
       (love.graphics.setColor 1 1 0)
       (love.graphics.setFont titleFont)
       (if paused

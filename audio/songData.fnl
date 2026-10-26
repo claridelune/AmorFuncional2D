@@ -100,6 +100,17 @@
     ]
 )
 
+(local songDisplayNames
+    [
+        "Mandatory Overtime"
+        "March"
+        "On My Way"
+        "A7-Eb7-Dmajor7"
+        "Crushing Enemies"
+    ]
+)
+
+
 (local songBPMs
     [
         188
@@ -128,6 +139,10 @@
     (.. :assets/ (. songNames song))
 )
 
+(fn getSongName [song]
+    (. songDisplayNames song)
+)
+
 (fn getSongBPM [song]
     (. songBPMs song)
 )
@@ -139,6 +154,7 @@
 {
     : getBeats
     : getSongTitle
+    : getSongName
     : getSongBPM
     : getSongVolume
 }
