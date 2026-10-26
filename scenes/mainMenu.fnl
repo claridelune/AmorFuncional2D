@@ -7,6 +7,16 @@
   (love.graphics.setLineWidth 4)
   (set titleFont (love.graphics.newFont :assets/Coolville.otf 100))
   (tset _G :totalLevels 5)
+  
+  (when (not (. _G :maxScoreLvl))
+    (tset _G :maxScoreLvl [])
+  )
+
+  (for [i 1 (. _G :totalLevels)]
+    (when (not (. (. _G :maxScoreLvl) i))
+      (tset (. _G :maxScoreLvl) i 0)
+    )
+  )
 )
 
 (fn update [dt]

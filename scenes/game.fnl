@@ -16,6 +16,7 @@
 (var everyNBeats 0)
 (var newSquares 0)
 (var updateBoard true)
+(var minWinScore nil)
 
 (var score 0)
 (var songKey "")
@@ -199,6 +200,7 @@
   (set lastBeat -1)
   (set updateBoard true)
   (set nSquares 1)
+  (set minWinScore (songData.getSongMinScore songId))
 )
 
 (fn update [dt]
@@ -367,7 +369,7 @@
       strScore (.. "Score: " (tostring score))
       strBest (.. "Best: " (tostring bestScore))
       gen (and (<= w2100 xx) (<= xx (+ w2100 170)))
-      next (and (not paused) (< songId (. _G :totalLevels)))
+      next (and (and (not paused) (>= score minWinScore)) (< songId (. _G :totalLevels)))
     ]
       (if (and gen (and (<= 400 yy) (< yy 430)))
         (love.graphics.setColor 1 1 1 1)
@@ -375,7 +377,7 @@
       )
       (if paused
         (love.graphics.print "Restart" (+ w2100 25) 400)
-        (love.graphics.print "Play Again" w2100 400)
+        (love.graphics.print "Play Again" (+ w2100 3) 400)
       )
       (when next
         (if (and gen (and (<= 500 yy) (< yy 530)))
@@ -426,7 +428,10 @@
       (love.graphics.setFont titleFont)
       (if paused
         (love.graphics.print "Paused" (- w2100 17) 200)
-        (love.graphics.print "Level Completed!" (- w2100 180) 200)
+        (if (>= score minWinScore)
+          (love.graphics.print "Level Completed!" (- w2100 180) 200)
+          (love.graphics.print "Try Again!" (- w2100 60) 200)
+        )
       )
     )
   )
@@ -513,6 +518,10 @@
       )
     )
   )
+
+  ;;(when (= key "q")
+  ;;  (audio.pause)
+  ;;)
 
   ;;(when (= key "f5")
   ;;  (if fullscreen 

@@ -20,6 +20,8 @@
 (var lastMouseX nil)
 (var lastMouseY nil)
 
+(var songs [])
+
 (fn getLevelX [index]
   (+ firstLevelX (* (- index 1) levelSize))
 )
@@ -51,9 +53,11 @@
 
 (fn startSong [song]
   (when song
-    (set selectedSong song)
-    (tset _G :currSong song)
-    (set changeScene 1)
+    (when (or (= song 1) (>= (highScores.getScore (songData.getSongTitle (- song 1))) (songData.getSongMinScore (- song 1))))
+      (set selectedSong song)
+      (tset _G :currSong song)
+      (set changeScene 1)
+    )
   )
 )
 
@@ -66,6 +70,11 @@
   (set lastMouseX (love.mouse.getX))
   (set lastMouseY (love.mouse.getY))
   (set selectedSong (getHoveredSong lastMouseX lastMouseY))
+  (set songs [])
+  (for [i 1 (. _G :totalLevels)]
+    (table.insert songs (love.audio.newSource (songData.getSongTitle i) :stream))
+    (: (. songs i) :setVolume (songData.getSongVolume i))
+  )
 )
 
 (fn update [dt]
@@ -86,6 +95,20 @@
     )
   )
 
+  (when selectedSong
+    (for [i 1 (. _G :totalLevels)]
+      (if (and (= selectedSong i) (or (= selectedSong 1) (>= (highScores.getScore (songData.getSongTitle (- selectedSong 1))) (songData.getSongMinScore (- selectedSong 1)))))
+        (: (. songs i) :play)
+        (: (. songs i) :pause)
+      )
+    )
+  )
+
+  (when (> changeScene 0)
+    (for [i 1 (. _G :totalLevels)]
+        (: (. songs i) :pause)
+    )
+  )
   changeScene
 )
 
@@ -103,13 +126,24 @@
     (if selectedSong
       (let [songName (songData.getSongName selectedSong)
             songKey (songData.getSongTitle selectedSong)
-            strBest (.. "Best: " (tostring (highScores.getScore songKey)))]
+            strBest (.. "Best: " (tostring (highScores.getScore songKey)))
+            unlocked (or (= selectedSong 1) (>= (highScores.getScore (songData.getSongTitle (- selectedSong 1))) (songData.getSongMinScore (- selectedSong 1))))
+            ]
 
-        (love.graphics.setColor 1 1 1 1)
-        (love.graphics.printf songName textX (+ panelY 20) textWidth "right")
+        (if unlocked
+          (do
+            (love.graphics.setColor 1 1 1 1)
+            (love.graphics.printf songName textX (+ panelY 20) textWidth "right")
 
-        (love.graphics.setColor 1 1 0 1)
-        (love.graphics.printf strBest textX (+ panelY 90) textWidth "right")
+            (love.graphics.setColor 1 1 0 1)
+            (love.graphics.printf strBest textX (+ panelY 90) textWidth "right")
+          )
+          (do
+            (love.graphics.setColor 0.5 0.5 0.5 1)
+            (love.graphics.printf "LOCKED"
+                                  textX (+ panelY 55) textWidth "right")
+          )
+        )
       )
 
       (do
@@ -131,18 +165,27 @@
     (for [index 1 (. _G :totalLevels)]
       (let [ini (getLevelX index)
             pos (= index selectedSong)
+            unlocked (or (= index 1) (>= (highScores.getScore (songData.getSongTitle (- index 1))) (songData.getSongMinScore (- index 1))))
             textX (+ ini 40)
             textY (+ levelY 35)]
 
-        (if pos
+        (if (and pos true)
           (love.graphics.setColor 0 0 1)
           (love.graphics.setColor 0.5 0.5 0.5)
         )
 
         (love.graphics.rectangle "line" ini levelY levelSize levelSize)
-        (love.graphics.print index textX textY)
+        (if unlocked
+            (love.graphics.print index textX textY)
+            (do
+                (love.graphics.rectangle "line" (- textX 3) (+ textY 5) 26 26)
+                (love.graphics.circle "fill" (+ textX 10) (+ textY 15) 4)
+                (love.graphics.line (+ textX 10) (+ textY 15) (+ textX 10) (+ textY 25))
+                (love.graphics.arc "line" "open" (+ textX 10) (+ textY 5) 8 0 -3)
+            )
+        )
 
-        (when pos
+        (when (and unlocked pos)
           (love.graphics.setColor 1 1 0)
           (love.graphics.rectangle "line"
                                    (- ini selectionOffset)
@@ -167,7 +210,9 @@
   (love.graphics.setFont titleFont)
   (love.graphics.print "SELECT LEVEL" 250 150)
 
-  (drawPreview)
+  (when selectedSong
+    (drawPreview)
+  )
 )
 
 (fn keypressed [key]

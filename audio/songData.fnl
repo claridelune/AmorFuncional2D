@@ -131,6 +131,16 @@
     ]
 )
 
+(local songMinScore
+    [
+        2000
+        2000
+        2000
+        2000
+        2000
+    ]
+)
+
 (fn getBeats [song bar]
     (. (. songData song) bar)
 )
@@ -151,10 +161,15 @@
     (. songVolumes song)
 )
 
+(fn getSongMinScore [song]
+    (. songMinScore song)
+)
+
 {
     : getBeats
     : getSongTitle
     : getSongName
     : getSongBPM
     : getSongVolume
+    : getSongMinScore
 }
