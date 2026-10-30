@@ -141,6 +141,12 @@
     ]
 )
 
+(local tutorialSongs {1 true})
+
+(fn hasTutorial [song]
+    (= (. tutorialSongs song) true)
+)
+
 (fn getBeats [song bar]
     (. (. songData song) bar)
 )
@@ -166,6 +172,7 @@
 )
 
 {
+    : hasTutorial
     : getBeats
     : getSongTitle
     : getSongName

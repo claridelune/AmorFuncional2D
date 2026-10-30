@@ -5,6 +5,11 @@
 (local labels ["Nope!" "Ok " "Great!" "Perfect!" "Miss!" ""])
 (local colors [[1 0 0] [0 1 0] [0 1 0] [0 1 0] [1 0 0] [1 1 0]])
 (local beatAnimationDur 5)
+(local tutorialKeys [:r :i :f :j])
+
+(local tutorialTitleFont (love.graphics.newFont :assets/Coolville.otf 60))
+(local tutorialBodyFont (love.graphics.newFont :assets/Coolville.otf 28))
+(local tutorialKeyFont (love.graphics.newFont :assets/Coolville.otf 34))
 
 (var songId 4)
 (var bar 1)
@@ -160,20 +165,39 @@
   )
 )
 
-(fn moveBigS []
+(fn getPendingTarget []
   (var i 1)
-  (while (and (<= i nSquares) (not (. (. listS i) 1)))
+  (while (and (<= i nSquares) (not (and (. listS i) (. (. listS i) 1))))
     (set i (+ 1 i))
   )
   (when (<= i nSquares)
-    (let [target-x (if (= (% (. (. listS i) 2) 2) (% bigx 2))
-                    (. (. listS i) 2)
-                    (- (. (. listS i) 2) 1))
-          target-y (if (= (% (. (. listS i) 3) 2) (% bigy 2))
-                    (. (. listS i) 3)
-                    (- (. (. listS i) 3) 1))]
-      (animations.move.init bigSquare (+ inicio (* cuadrado target-x)) (+ padding (* cuadrado target-y)) 0.1))
-    (set moveBS 0)
+    (. listS i)
+  )
+)
+
+(fn getTutorialKey []
+  (let [target (getPendingTarget)]
+    (when target
+      (let [dx (% (- (. target 2) bigx) 2)
+            dy (% (- (. target 3) bigy) 2)]
+        (. tutorialKeys (+ 1 dx (* dy 2)))
+      )
+    )
+  )
+)
+
+(fn moveBigS []
+  (let [target (getPendingTarget)]
+    (when target
+      (let [target-x (if (= (% (. target 2) 2) (% bigx 2))
+                      (. target 2)
+                      (- (. target 2) 1))
+            target-y (if (= (% (. target 3) 2) (% bigy 2))
+                      (. target 3)
+                      (- (. target 3) 1))]
+        (animations.move.init bigSquare (+ inicio (* cuadrado target-x)) (+ padding (* cuadrado target-y)) 0.1))
+      (set moveBS 0)
+    )
   )
 )
 
@@ -274,7 +298,64 @@
 )
 
 
+(fn drawTutorial []
+  (let [repeating (= (audio.getPhase) :repeat)
+        highlightedKey (when repeating (getTutorialKey))
+        heading (if repeating "REPEAT" "LISTEN")
+        hint (if repeating "Press on each TOC" "Remember pattern")
+        cell 65
+        gap 6
+        diagramSize (+ (* cell 2) gap)
+        hintY (+ (tutorialTitleFont:getHeight) 10)
+        diagramY (+ hintY (tutorialBodyFont:getHeight) 22)
+        panelX (+ inicio box 18)
+        panelWidth (- (love.graphics.getWidth) panelX 18)
+        panelY (/ (- (love.graphics.getHeight) (+ diagramY diagramSize)) 2)]
+
+    (love.graphics.push :all)
+    (love.graphics.translate panelX panelY)
+
+    (love.graphics.setFont tutorialTitleFont)
+    (love.graphics.setColor 1 1 (if repeating 1 0) 1)
+    (love.graphics.print heading
+      (/ (- panelWidth (tutorialTitleFont:getWidth heading)) 2) 0)
+
+    (love.graphics.setFont tutorialBodyFont)
+    (love.graphics.setColor 1 1 1)
+    (love.graphics.print hint
+      (/ (- panelWidth (tutorialBodyFont:getWidth hint)) 2) hintY)
+
+    (love.graphics.setFont tutorialKeyFont)
+    (love.graphics.setLineWidth 2)
+
+    (each [index key (ipairs tutorialKeys)]
+      (let [x (+ (/ (- panelWidth diagramSize) 2)
+                 (* (% (- index 1) 2) (+ cell gap)))
+            y (+ diagramY
+                 (* (math.floor (/ (- index 1) 2)) (+ cell gap)))
+            label (string.upper key)
+            highlighted (= key highlightedKey)]
+
+        (love.graphics.setColor 1 1 (if highlighted 0 1))
+        (love.graphics.rectangle
+          (if highlighted :fill :line) x y cell cell)
+
+        (when highlighted
+          (love.graphics.setColor 0 0 0))
+
+        (love.graphics.print label
+          (+ x (/ (- cell (tutorialKeyFont:getWidth label)) 2))
+          (+ y (/ (- cell (tutorialKeyFont:getHeight)) 2)))))
+
+    (love.graphics.pop)
+	)
+)
+
 (fn draw []
+	(local showTutorial
+		(and (songData.hasTutorial songId)
+			 (not (or paused popUpMenu))
+			 (> (length (. (songData.getBeats songId bar) 2)) 0)))
 
   (when updateBoard
     (rSquares)
@@ -355,6 +436,10 @@
 
   (when (> lastBeat 0)
     (love.graphics.pop)
+  )
+
+  (when showTutorial
+    (drawTutorial)
   )
 
   (when (or paused popUpMenu)

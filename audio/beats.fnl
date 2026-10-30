@@ -70,6 +70,15 @@
     (rhythm.getCurrentAudioTime)
 )
 
+(fn getPhase []
+    (if (< currBeat 0)
+        :waiting
+        (< currBeat (/ bSize 2))
+        :listen
+        :repeat
+    )
+)
+
 (fn setNextBeats [beatsSize newBeatsTic newBeatsToc]
     (updateBeats beatsSize newBeatsTic newBeatsToc)
 )
@@ -101,6 +110,7 @@
     : getBeatTime
     : getBeatTimeComplete
     : getCurrentAudioTime
+    : getPhase
     : audioFinished
     : audioStarted
     : setNextBeats

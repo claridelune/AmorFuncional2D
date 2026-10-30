@@ -125,6 +125,10 @@
   )
 )
 
+(fn getPhase []
+  (beats.getPhase)
+)
+
 (fn stop []
   (beats.stop)
 )
@@ -154,6 +158,7 @@
   : audioFinished
   : audioStarted
   : getBeatDiff
+  : getPhase
   : changeBeats
   : stop
   : pause
